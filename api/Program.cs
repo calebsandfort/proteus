@@ -2,8 +2,6 @@ using api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:8080");
-
 builder.Services.AddSingleton<TimescaleRepository>();
 
 var app = builder.Build();
