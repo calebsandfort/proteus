@@ -90,7 +90,7 @@
   <!-- Legend -->
   <g transform="translate(50, 280)">
     <text x="0" y="0" font-size="11" fill="#64748b" font-weight="600">Connection String:</text>
-    <text x="0" y="18" font-size="10" fill="#64748b" font-family="monospace">postgresql://postgres:postgres@localhost:5432/aurelius-ledger</text>
+    <text x="0" y="18" font-size="10" fill="#64748b" font-family="monospace">postgresql://postgres:postgres@localhost:5432/proteus</text>
 
     <text x="250" y="0" font-size="11" fill="#64748b" font-weight="600">Config File:</text>
     <text x="250" y="18" font-size="10" fill="#64748b">frontend/drizzle.config.ts</text>
