@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+WORKTREE_ROOT="${WM_WORKTREE_PATH:-$(cd "$(dirname "$0")/.." && pwd)}"
+
+# Load env vars from .env / .env.local
+_load_dotenv() {
+  local file="$1"
+  [[ -f "$file" ]] || return 0
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ -z "$line" || "$line" == \#* || "$line" != *=* ]] && continue
+    local key="${line%%=*}"
+    local value="${line#*=}"
+    [[ "$value" == '"'*'"' ]] && value="${value:1:${#value}-2}"
+    [[ "$value" == "'"*"'" ]] && value="${value:1:${#value}-2}"
+    export "$key=$value"
+  done < "$file"
+}
+
+_load_dotenv "${WORKTREE_ROOT}/.env"
+_load_dotenv "${WORKTREE_ROOT}/.env.local"
+
+# Use ASPNETCORE_URLS to override listen address — standard .NET pattern
+export ASPNETCORE_ENVIRONMENT=Development
+export ASPNETCORE_URLS="http://0.0.0.0:${API_PORT:-8080}"
+
+# .NET reads ConnectionStrings__DefaultConnection via config (DOTNET_ prefix or appsettings)
+# The appsettings.Local.json is NOT auto-loaded; pass connection string via env
+export ConnectionStrings__DefaultConnection="Host=localhost;Port=${DB_PORT:-5432};Database=${POSTGRES_DB:-proteus};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}"
+
+cd "${WORKTREE_ROOT}/api"
+exec dotnet run
