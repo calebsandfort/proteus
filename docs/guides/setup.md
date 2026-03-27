@@ -1,6 +1,6 @@
 # Setup Guide
 
-This guide covers the initial setup of the Boilerplate project.
+This guide covers the initial setup of the Proteus project.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ This guide covers the initial setup of the Boilerplate project.
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd boilerplate
+cd proteus
 
 # Install frontend dependencies
 cd frontend && pnpm install
@@ -42,7 +42,7 @@ Edit the files with your settings:
 **frontend/.env:**
 ```env
 # Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/boilerplate
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/proteus
 
 # Better Auth
 BETTER_AUTH_SECRET=your-secret-key-min-32-chars-long
@@ -55,7 +55,7 @@ BACKEND_URL=http://localhost:8000
 **backend/.env:**
 ```env
 # Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/boilerplate
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/proteus
 
 # OpenAI
 OPENAI_API_KEY=sk-your-openai-key
@@ -89,7 +89,7 @@ cd backend && uv run uvicorn src.main:app --reload
 ## Project Structure
 
 ```
-boilerplate/
+proteus/
 ├── frontend/          # Next.js application
 │   ├── src/
 │   │   ├── app/     # Pages and API routes

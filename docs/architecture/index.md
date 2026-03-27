@@ -4,7 +4,7 @@ Documentation of the system's design and structure.
 
 ## Overview
 
-Boilerplate follows a clean separation of concerns:
+Proteus follows a clean separation of concerns:
 - **Frontend**: Next.js handles UI, auth, and database
 - **Backend**: FastAPI handles AI/LLM processing
 - **Database**: PostgreSQL with Drizzle ORM

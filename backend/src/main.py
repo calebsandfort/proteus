@@ -11,7 +11,7 @@ from src.agent.graph import agent  # noqa: E402
 from src.api.router import api_router  # noqa: E402
 from src.config import settings  # noqa: E402
 
-app = FastAPI(title="Boilerplate API")
+app = FastAPI(title="Proteus API")
 
 app.add_middleware(
     CORSMiddleware,

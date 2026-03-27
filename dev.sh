@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-SESSION="boilerplate"
+SESSION="proteus"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Start only the database

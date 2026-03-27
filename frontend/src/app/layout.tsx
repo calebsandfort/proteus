@@ -4,7 +4,7 @@ import { CopilotProvider } from "@/components/providers/copilot-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Boilerplate",
+  title: "Proteus",
   description: "AI-powered financial ledger built with Next.js, FastAPI, and TimescaleDB",
 }
 

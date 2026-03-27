@@ -7,7 +7,7 @@ This guide details all environment variables used in the project.
 Environment variables are managed through a single `.env` file at the project root, with symlinks to frontend and backend directories.
 
 ```
-boilerplate/
+proteus/
 ├── .env                    # Main environment file
 ├── frontend/.env          # Symlink → ../.env
 └── backend/.env          # Symlink → ../.env
@@ -21,7 +21,7 @@ boilerplate/
 |----------|---------|-------------|
 | `POSTGRES_USER` | `postgres` | Database username |
 | `POSTGRES_PASSWORD` | `postgres` | Database password |
-| `POSTGRES_DB` | `boilerplate` | Database name |
+| `POSTGRES_DB` | `proteus` | Database name |
 | `DATABASE_URL` | — | Full connection string |
 | `DB_PORT` | `5432` | Database port |
 
@@ -69,8 +69,8 @@ Get your key from: https://platform.openai.com/api-keys
 # Database
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-POSTGRES_DB=boilerplate
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/boilerplate
+POSTGRES_DB=proteus
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/proteus
 DB_PORT=5432
 
 # Better Auth
@@ -109,7 +109,7 @@ This is required because `ChatOpenAI` reads `OPENAI_API_KEY` at import time.
 
 Use localhost URLs:
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/boilerplate
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/proteus
 BACKEND_URL=http://localhost:8000
 BETTER_AUTH_URL=http://localhost:3000
 ```

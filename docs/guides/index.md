@@ -1,6 +1,6 @@
 # Guides
 
-Step-by-step guides for working with Boilerplate.
+Step-by-step guides for working with Proteus.
 
 ## Getting Started
 

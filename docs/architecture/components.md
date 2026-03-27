@@ -1,6 +1,6 @@
 # Component Architecture
 
-This document describes the frontend component structure and patterns used in Boilerplate.
+This document describes the frontend component structure and patterns used in Proteus.
 
 ## Directory Structure
 

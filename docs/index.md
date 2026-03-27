@@ -1,10 +1,10 @@
-# Boilerplate Documentation
+# Proteus Documentation
 
-Welcome to the Boilerplate documentation. This project provides a production-ready foundation with Next.js, FastAPI, LangGraph, and CopilotKit integration.
+Welcome to the Proteus documentation. This project provides a production-ready foundation with Next.js, FastAPI, LangGraph, and CopilotKit integration.
 
 ## Overview
 
-Boilerplate implements a modern AI-powered application architecture:
+Proteus implements a modern AI-powered application architecture:
 
 - **Frontend**: Next.js 15 with App Router, Tailwind CSS, ShadCN/ui
 - **Backend**: FastAPI with LangGraph for AI agent orchestration
@@ -43,7 +43,7 @@ Boilerplate implements a modern AI-powered application architecture:
 ## Project Structure
 
 ```
-boilerplate/
+proteus/
 ├── docs/                    # Documentation
 │   ├── architecture/        # System architecture
 │   ├── api/                 # API reference

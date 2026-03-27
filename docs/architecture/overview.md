@@ -1,6 +1,6 @@
 # System Architecture Overview
 
-This document describes the high-level architecture of Boilerplate.
+This document describes the high-level architecture of Proteus.
 
 ## Architecture Diagram
 

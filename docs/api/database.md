@@ -99,7 +99,7 @@ export const db = drizzle(client, { schema })
 ## Environment Variable
 
 ```
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/boilerplate
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/proteus
 ```
 
 ## Running Migrations

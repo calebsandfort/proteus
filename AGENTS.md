@@ -1,8 +1,8 @@
-# Boilerplate Project
+# Proteus Project
 
 ## Project Overview
 
-A production-ready full-stack boilerplate for building AI-powered applications. Provides a pre-wired integration between a Next.js frontend and a FastAPI backend, with self-hosted authentication (Better Auth + Drizzle ORM), an agentic AI pipeline (LangGraph + CopilotKit), and a TimescaleDB database -- all containerized with Docker Compose for reproducible local development and straightforward deployment.
+A production-ready full-stack project for building AI-powered applications. Provides a pre-wired integration between a Next.js frontend and a FastAPI backend, with self-hosted authentication (Better Auth + Drizzle ORM), an agentic AI pipeline (LangGraph + CopilotKit), and a TimescaleDB database -- all containerized with Docker Compose for reproducible local development and straightforward deployment.
 
 ## Project-Specific Rules
 
@@ -19,7 +19,7 @@ A production-ready full-stack boilerplate for building AI-powered applications. 
 ## Project Structure
 
 ```
-boilerplate/
+proteus/
 ├── .env.example                    # All required environment variables
 ├── docker-compose.yml              # Three-service orchestration
 ├── scripts/

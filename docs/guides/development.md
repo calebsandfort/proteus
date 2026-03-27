@@ -36,7 +36,7 @@ docker-compose down
 docker run -d \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=boilerplate \
+  -e POSTGRES_DB=proteus \
   -p 5432:5432 \
   timescale/timescaledb:latest-pg16
 ```

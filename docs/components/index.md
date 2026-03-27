@@ -1,6 +1,6 @@
 # Components
 
-This section documents the UI components used in Boilerplate.
+This section documents the UI components used in Proteus.
 
 ## Core Components
 
