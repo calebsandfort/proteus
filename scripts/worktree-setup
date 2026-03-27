@@ -6,6 +6,8 @@ ENV_FLAGS="--env-file ${WORKTREE_ROOT}/.env --env-file ${WORKTREE_ROOT}/.env.loc
 POSTGRES_USER=$(grep -E '^POSTGRES_USER=' "${WORKTREE_ROOT}/.env" | cut -d= -f2- | tr -d '"' || echo "postgres")
 
 echo "=== [1/6] Starting database ==="
+# Stop any existing db container from this project (stale containers can hold stale ports)
+docker compose $ENV_FLAGS down db 2>/dev/null || true
 docker compose $ENV_FLAGS up db -d
 
 echo "=== [2/6] Waiting for database ==="
