@@ -2,6 +2,13 @@
 
 This command performs all the steps necessary to get the project up and running after cloning.
 
+## Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (for API)
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Node.js 22+](https://nodejs.org/) with pnpm
+- [Python 3.13+](https://www.python.org/) with uv
+
 ## Steps
 
 1. **Install frontend dependencies**
@@ -18,6 +25,7 @@ This command performs all the steps necessary to get the project up and running 
    ```bash
    cp frontend/.env.example frontend/.env
    cp backend/.env.example backend/.env
+   cp .env.example .env
    ```
 
 4. **Start Docker services (database)**
@@ -35,9 +43,16 @@ This command performs all the steps necessary to get the project up and running 
    cd frontend && pnpm dev
    ```
 
+7. **Start API server**
+   ```bash
+   cd api && dotnet run
+   ```
+
 ## Verification
 
 After setup, verify the following endpoints:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - Backend Health: http://localhost:8000/health
+- API: http://localhost:8080
+- API Health: http://localhost:8080/health

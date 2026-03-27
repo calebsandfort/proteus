@@ -1,60 +1,4 @@
-# Boilerplate Project
-
-## Project Overview
-
-A production-ready full-stack boilerplate for building AI-powered applications. Provides a pre-wired integration between a Next.js frontend and a FastAPI backend, with self-hosted authentication (Better Auth + Drizzle ORM), an agentic AI pipeline (LangGraph + CopilotKit), and a TimescaleDB database -- all containerized with Docker Compose for reproducible local development and straightforward deployment.
-
-## Project-Specific Rules
-
-> General coding style, testing, security, and git workflow rules are defined in `~/.claude/rules/`.
-> Only project-specific overrides and additions belong here.
-
-- Organize by **feature/domain**, not by type (e.g., `components/auth/`, `agent/`, not `components/`, `utils/`)
-- Frontend validation uses **Zod** schemas; backend validation uses **Pydantic** models
-- Auth logic lives exclusively in the **frontend** (Next.js API routes + Drizzle); the backend handles **AI/ML only**
-- All CopilotKit traffic flows through the Next.js `/api/copilotkit` proxy -- the FastAPI backend is never exposed directly to the browser
-
----
-
-## Project Structure
-
-```
-boilerplate/
-├── .env.example                    # All required environment variables
-├── docker-compose.yml              # Three-service orchestration
-├── scripts/
-│   └── init-db.sql                 # TimescaleDB extension init
-│
-├── frontend/                       # Next.js (App Router)
-│   ├── Dockerfile
-│   ├── drizzle.config.ts
-│   ├── vitest.config.ts
-│   ├── src/
-│   │   ├── app/                    # Pages and API routes
-│   │   │   ├── (auth)/             # Sign-in, sign-up pages
-│   │   │   ├── dashboard/          # Authenticated dashboard
-│   │   │   ├── chat/               # CopilotKit chat page
-│   │   │   └── api/                # Auth + CopilotKit proxy routes
-│   │   ├── components/             # UI components by domain
-│   │   ├── db/schema/              # Drizzle schema (auth tables)
-│   │   ├── hooks/                  # Custom React hooks
-│   │   └── lib/                    # Auth, DB, and utility modules
-│   └── __tests__/
-│
-├── backend/                        # FastAPI (Python)
-│   ├── Dockerfile
-│   ├── pyproject.toml
-│   ├── src/
-│   │   ├── main.py                 # App entry point + CopilotKit endpoint
-│   │   ├── config.py               # Pydantic Settings
-│   │   ├── agent/                  # LangGraph pipeline
-│   │   └── api/                    # REST endpoints
-│   └── tests/
-```
-
----
-
-## Design System
+# Proteus — Design System
 
 The UI is a **cool, professional analytical aesthetic** — clean surfaces, layered depth, and confident use of color to separate analysis from insight. The visual identity uses a dual-color system: **blue for analysis/intelligence** and **amber for insight/action**.
 
@@ -62,7 +6,7 @@ The overall feel is premium fintech — closer to Stripe or Linear than a basic 
 
 ---
 
-### Theme Architecture
+## Theme Architecture
 
 Theme variables live in `frontend/src/globals.css` as OKLCH CSS custom properties. ShadCN components consume them via `--primary`, `--secondary`, etc. Raw Tailwind color classes (`blue-*`, `amber-*`, `slate-*`) are used directly for charts, gradients, and decorative elements.
 
@@ -78,9 +22,9 @@ globals.css (oklch vars)
 
 ---
 
-### Color Palette
+## Color Palette
 
-#### Light Surfaces (default background system)
+### Light Surfaces (default background system)
 
 | Role | Class | Hex |
 |------|-------|-----|
@@ -93,7 +37,7 @@ globals.css (oklch vars)
 | Active border | `border-blue-200` | `#BFDBFE` |
 | Divider | `border-slate-200` | `#E2E8F0` |
 
-#### Text
+### Text
 
 | Role | Class | Hex |
 |------|-------|-----|
@@ -103,7 +47,7 @@ globals.css (oklch vars)
 | Placeholder | `text-slate-300` | `#CBD5E1` |
 | Inverse (on dark) | `text-white` | `#FFFFFF` |
 
-#### Blue — Analysis, Intelligence, The Query
+### Blue — Analysis, Intelligence, The Query
 
 | Use | Class |
 |-----|-------|
@@ -118,7 +62,7 @@ globals.css (oklch vars)
 | Badge (informational) | `bg-blue-50 border-blue-200 text-blue-700` |
 | Tooltip background | `bg-slate-900 text-white` |
 
-#### Amber — Insight, Action, The Answer
+### Amber — Insight, Action, The Answer
 
 | Use | Class |
 |-----|-------|
@@ -132,7 +76,7 @@ globals.css (oklch vars)
 | Star / bookmark | `text-amber-500` |
 | Notification dot | `bg-amber-500` |
 
-#### Semantic Colors
+### Semantic Colors
 
 | Role | Class |
 |-----|-------|
@@ -143,7 +87,7 @@ globals.css (oklch vars)
 
 ---
 
-### Typography
+## Typography
 
 | Usage | Classes | Notes |
 |-------|---------|-------|
@@ -163,9 +107,9 @@ Fonts are configured in `globals.css`:
 
 ---
 
-### Surface Treatment
+## Surface Treatment
 
-#### Soft Depth (default for all cards and panels)
+### Soft Depth (default for all cards and panels)
 ```tsx
 {/* Standard card */}
 <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -177,7 +121,7 @@ Fonts are configured in `globals.css`:
 <div className="bg-white rounded-xl border border-slate-200 shadow-md">
 ```
 
-#### Frosted Glass (selective — overlays and secondary panels only)
+### Frosted Glass (selective — overlays and secondary panels only)
 ```tsx
 {/* Observability panel */}
 <div className="bg-white/80 backdrop-blur-xl rounded-xl border border-slate-200/60 shadow-lg">
@@ -196,9 +140,9 @@ Fonts are configured in `globals.css`:
 
 ---
 
-### Key Patterns
+## Key Patterns
 
-#### Chat Message (User)
+### Chat Message (User)
 ```tsx
 <div className="flex justify-end">
   <div className="bg-blue-600 text-white rounded-2xl rounded-br-md px-4 py-2.5 max-w-[80%] text-sm leading-relaxed">
@@ -207,7 +151,7 @@ Fonts are configured in `globals.css`:
 </div>
 ```
 
-#### Chat Message (System — with visualization)
+### Chat Message (System — with visualization)
 ```tsx
 <div className="flex justify-start">
   <div className="bg-white rounded-2xl rounded-bl-md border border-slate-200 shadow-sm px-4 py-3 max-w-[90%] space-y-3">
@@ -222,7 +166,7 @@ Fonts are configured in `globals.css`:
 </div>
 ```
 
-#### Metric Card
+### Metric Card
 ```tsx
 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-1">
   <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Market Share</p>
@@ -231,7 +175,7 @@ Fonts are configured in `globals.css`:
 </div>
 ```
 
-#### Filter / Dimension Chip (active)
+### Filter / Dimension Chip (active)
 ```tsx
 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium">
   Texas
@@ -239,14 +183,14 @@ Fonts are configured in `globals.css`:
 </span>
 ```
 
-#### Filter / Dimension Chip (inactive)
+### Filter / Dimension Chip (inactive)
 ```tsx
 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-medium cursor-pointer hover:bg-slate-200 transition-colors">
   Geography
 </span>
 ```
 
-#### Observability Panel (frosted glass)
+### Observability Panel (frosted glass)
 ```tsx
 <div className="bg-white/80 backdrop-blur-xl rounded-xl border border-slate-200/60 shadow-lg p-4 space-y-3 font-mono text-xs">
   <div className="flex items-center justify-between">
@@ -260,7 +204,7 @@ Fonts are configured in `globals.css`:
 </div>
 ```
 
-#### Data Table
+### Data Table
 ```tsx
 <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
   <table className="w-full text-sm">
@@ -280,14 +224,14 @@ Fonts are configured in `globals.css`:
 </div>
 ```
 
-#### ShadCN Button — when to use
+### ShadCN Button — when to use
 Use ShadCN `Button` for standard interactive elements: form submissions, navigation (paired with `asChild` + Next.js `Link`), and dialog actions. Use native `<button>` with raw Tailwind for chart controls, filter chips, and custom-styled elements that don't fit ShadCN's variant system.
 
 ---
 
-### Chart Guidelines (ECharts)
+## Chart Guidelines (ECharts)
 
-#### Color Sequence for Multi-Series Charts
+### Color Sequence for Multi-Series Charts
 1. `#2563EB` (blue-600) — primary series
 2. `#F59E0B` (amber-500) — secondary / comparison
 3. `#10B981` (emerald-500) — tertiary
@@ -295,7 +239,7 @@ Use ShadCN `Button` for standard interactive elements: form submissions, navigat
 5. `#EC4899` (pink-500) — fifth
 6. `#6366F1` (indigo-500) — sixth
 
-#### Chart Styling Defaults
+### Chart Styling Defaults
 - Background: transparent (inherits card background)
 - Grid lines: `#E2E8F0` (slate-200), dashed
 - Axis labels: `#94A3B8` (slate-400), 11px Inter
@@ -303,7 +247,7 @@ Use ShadCN `Button` for standard interactive elements: form submissions, navigat
 - Tooltip: `#0F172A` background, white text, rounded-lg, subtle shadow
 - Legend: below chart, `#475569` (slate-600) text, 12px Inter
 
-#### Chart Container
+### Chart Container
 Always wrap ECharts instances in a consistent container:
 ```tsx
 <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
@@ -313,7 +257,7 @@ Always wrap ECharts instances in a consistent container:
 
 ---
 
-### Changing the Theme
+## Changing the Theme
 
 The primary and secondary hue pair is defined once in `frontend/src/globals.css`:
 
@@ -337,100 +281,3 @@ The primary and secondary hue pair is defined once in `frontend/src/globals.css`
 | Pink / Rose | `350` |
 
 After changing the CSS vars, also update any **hardcoded raw Tailwind classes** in the page components — search for `blue-` and `amber-` and replace with the corresponding Tailwind color scale for your new hues. Chart color sequences, filter chips, badges, and chat bubbles all use raw classes and must be updated manually.
-
----
-
-## Tech Stack
-
-#### Architecture Diagram
-
-```mermaid
-graph TB
-    subgraph Client["Browser"]
-        UI["Next.js App<br/>(React + TypeScript)"]
-    end
-
-    subgraph Frontend["Frontend Container :3000"]
-        NEXT["Next.js Server"]
-        AUTH_API["API Routes<br/>/api/auth/*"]
-        CK_PROXY["API Routes<br/>/api/copilotkit"]
-        MW["Middleware<br/>(Route Protection)"]
-    end
-
-    subgraph Backend["Backend Container :8000"]
-        FAST["FastAPI"]
-        CK_SDK["CopilotKit<br/>AG-UI Endpoint"]
-        LG["LangGraph<br/>Agent Pipeline"]
-        LLM["LLM Provider<br/>(OpenAI / etc.)"]
-    end
-
-    subgraph Database["Database Container :5432"]
-        TSDB["TimescaleDB<br/>(PostgreSQL 16)"]
-    end
-
-    UI -->|HTTP| NEXT
-    NEXT --> MW
-    MW --> AUTH_API
-    MW --> CK_PROXY
-    AUTH_API -->|"Better Auth<br/>+ Drizzle ORM"| TSDB
-    CK_PROXY -->|Proxy POST| CK_SDK
-    CK_SDK --> LG
-    LG --> LLM
-
-    style Client fill:#0F172A,stroke:#F59E0B,color:#F8FAFC
-    style Frontend fill:#0F172A,stroke:#F59E0B,color:#F8FAFC
-    style Backend fill:#0F172A,stroke:#A78BFA,color:#F8FAFC
-    style Database fill:#0F172A,stroke:#F59E0B,color:#F8FAFC
-```
-
-#### Frontend (`frontend/`)
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Framework | **Next.js** (App Router) | Server-side rendering, API routes, middleware |
-| Language | **TypeScript** | Type safety across the entire frontend |
-| UI Components | **Shadcn/ui** + **Tailwind CSS** | Accessible, composable component library with utility-first styling |
-| Icons | **Lucide-React** | Consistent, tree-shakeable icon set |
-| Forms | **React Hook Form** + **Zod** | Performant form state management with schema-based validation |
-| Authentication | **Better Auth** (self-hosted) | Email/password auth running in Next.js API routes |
-| ORM | **Drizzle ORM** | Type-safe database access for auth schema |
-| AI Interface | **CopilotKit** (React SDK) | Pre-built chat UI and frontend AI integration |
-| Testing | **Vitest** + **Testing Library** | Unit and component testing |
-| Package Manager | **pnpm** | Fast, disk-efficient dependency management |
-
-#### Backend (`backend/`)
-
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Framework | **FastAPI** | High-performance async Python API server |
-| AI Orchestration | **LangGraph** | Stateful, graph-based agentic workflows |
-| AI Integration | **CopilotKit** (Python SDK) | Exposes LangGraph agents to the frontend via CopilotKit protocol |
-| LLM Access | **LangChain** + **OpenAI** | Unified interface to LLM providers |
-| Configuration | **Pydantic Settings** | Type-safe environment variable management |
-| Testing | **Pytest** | Unit and integration testing |
-| Package Manager | **uv** | Fast Python dependency management and virtual environments |
-
-#### Infrastructure
-
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| Database | **TimescaleDB** (PostgreSQL 16) | Relational storage with time-series extensions |
-| Containerization | **Docker Compose** | Three-service orchestration (frontend, backend, db) |
-| Dev Workflow | Hot-reload mounts | Source directories mounted into containers for live reloading |
-
----
-
-## Integration Gotchas
-
-#### CopilotKit + LangGraph (AG-UI Protocol)
-
-- **Backend endpoint:** Use `add_langgraph_fastapi_endpoint` from `ag_ui_langgraph`, NOT `add_fastapi_endpoint` from `copilotkit.integrations.fastapi` -- the old function calls `dict_repr()` which doesn't exist on `LangGraphAGUIAgent`
-- **Backend checkpointer:** `LangGraphAGUIAgent` requires a checkpointer on the compiled graph (use `MemorySaver()` for dev) -- its `run()` method calls `aget_state` which fails without one
-- **Frontend route:** The `/api/copilotkit` route must use `CopilotRuntime` + `HttpAgent` from `@copilotkit/runtime` and `@ag-ui/client`, NOT a raw `fetch` proxy
-- **Agent name consistency:** The agent key in `CopilotRuntime({ agents: { chat_agent } })` must match the `name` in `LangGraphAGUIAgent(name="chat_agent")` and the `<CopilotKit agent="chat_agent">` prop
-
-#### Environment Variables
-
-- `dotenv.load_dotenv()` MUST be the first call in `backend/src/main.py`, BEFORE any LangChain/OpenAI imports -- `ChatOpenAI` reads `OPENAI_API_KEY` at import time
-- The `.env` file lives at the project root; `frontend/.env` and `backend/.env` are symlinks to it
-- `drizzle.config.ts` needs `import "dotenv/config"` at the top to load env vars
