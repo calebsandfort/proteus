@@ -1,0 +1,120 @@
+- id: nike
+  canonicalName: Nike
+  aliases:
+    - Nike Inc.
+    - Nike Brand
+    - NIKE
+
+- id: adidas
+  canonicalName: Adidas
+  aliases:
+    - Adidas AG
+    - adidas Originals
+
+- id: apple
+  canonicalName: Apple
+  aliases:
+    - Apple Inc.
+    - Apple Brand
+
+- id: samsung
+  canonicalName: Samsung
+  aliases:
+    - Samsung Electronics
+    - Samsung Brand
+
+- id: coca_cola
+  canonicalName: Coca-Cola
+  aliases:
+    - The Coca-Cola Company
+    - Coke
+
+- id: pepsi
+  canonicalName: Pepsi
+  aliases:
+    - PepsiCo
+    - Pepsi-Cola
+
+- id: microsoft
+  canonicalName: Microsoft
+  aliases:
+    - Microsoft Corporation
+    - MSFT
+
+- id: google
+  canonicalName: Google
+  aliases:
+    - Alphabet Inc.
+    - Google LLC
+
+- id: amazon
+  canonicalName: Amazon
+  aliases:
+    - Amazon.com
+    - Amazon.com Inc.
+
+- id: tesla
+  canonicalName: Tesla
+  aliases:
+    - Tesla Inc.
+    - Tesla Motors
+
+- id: walmart
+  canonicalName: Walmart
+  aliases:
+    - Walmart Inc.
+    - Wal-Mart
+
+- id: target
+  canonicalName: Target
+  aliases:
+    - Target Corporation
+    - Target Stores
+
+- id: home_depot
+  canonicalName: Home Depot
+  aliases:
+    - The Home Depot
+    - HD
+
+- id: lowes
+  canonicalName: Lowe's
+  aliases:
+    - Lowe's Companies Inc.
+    - Lowe's Home Improvement
+
+- id: nike_jordan
+  canonicalName: Nike Jordan
+  aliases:
+    - Jordan Brand
+    - Air Jordan
+
+- id: under_armour
+  canonicalName: Under Armour
+  aliases:
+    - UA
+    - Under Armour Inc.
+
+- id: puma
+  canonicalName: Puma
+  aliases:
+    - Puma SE
+    - Puma Brand
+
+- id: new_balance
+  canonicalName: New Balance
+  aliases:
+    - NB
+    - New Balance Athletics
+
+- id: converse
+  canonicalName: Converse
+  aliases:
+    - Converse Inc.
+    - Converse All Star
+
+- id: vans
+  canonicalName: Vans
+  aliases:
+    - Vans Brand
+    - VF Corporation

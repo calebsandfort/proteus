@@ -1,0 +1,42 @@
+- id: under_25k
+  canonicalName: Under $25,000
+  aliases:
+    - Low Income
+    - Bottom Quintile
+
+- id: 25k_50k
+  canonicalName: $25,000 - $49,999
+  aliases:
+    - Lower Middle Income
+    - Moderate Income
+
+- id: 50k_75k
+  canonicalName: $50,000 - $74,999
+  aliases:
+    - Middle Income
+    - Middle Class
+
+- id: 75k_100k
+  canonicalName: $75,000 - $99,999
+  aliases:
+    - Upper Middle Income
+    - Affluent Middle Class
+
+- id: 100k_150k
+  canonicalName: $100,000 - $149,999
+  aliases:
+    - High Income
+    - Upper Middle Class
+
+- id: 150k_200k
+  canonicalName: $150,000 - $199,999
+  aliases:
+    - Very High Income
+    - Affluent
+
+- id: over_200k
+  canonicalName: $200,000 and Over
+  aliases:
+    - Top Income
+    - Wealthy
+    - Elite

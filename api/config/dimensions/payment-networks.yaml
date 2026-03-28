@@ -1,0 +1,64 @@
+- id: visa
+  canonicalName: Visa
+  aliases:
+    - Visa Inc.
+    - Visa Credit
+    - Visa Debit
+
+- id: mastercard
+  canonicalName: Mastercard
+  aliases:
+    - MC
+    - Mastercard Inc.
+    - Master Card
+
+- id: amex
+  canonicalName: American Express
+  aliases:
+    - American Express
+    - Amex
+    - AXP
+
+- id: discover
+  canonicalName: Discover
+  aliases:
+    - Discover Card
+    - DFS
+
+- id: apple_pay
+  canonicalName: Apple Pay
+  aliases:
+    - Apple Pay Inc.
+    - APay
+
+- id: google_pay
+  canonicalName: Google Pay
+  aliases:
+    - Google Pay Inc.
+    - GPay
+    - Android Pay
+
+- id: paypal
+  canonicalName: PayPal
+  aliases:
+    - PayPal Holdings
+    - PP
+
+- id: shop_pay
+  canonicalName: Shop Pay
+  aliases:
+    - Shopify Pay
+    - ShopPay
+
+- id: cash
+  canonicalName: Cash
+  aliases:
+    - Physical Cash
+    - Paper Currency
+
+- id: debit
+  canonicalName: Debit Card
+  aliases:
+    - Debit Mastercard
+    - Visa Debit
+    - PIN Debit

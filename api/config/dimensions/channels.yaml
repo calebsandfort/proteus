@@ -1,0 +1,46 @@
+- id: online
+  canonicalName: Online
+  aliases:
+    - E-commerce
+    - Digital
+    - Web
+    - Internet
+
+- id: in_store
+  canonicalName: In-Store
+  aliases:
+    - Brick and Mortar
+    - Physical Retail
+    - Store
+
+- id: mobile_app
+  canonicalName: Mobile App
+  aliases:
+    - App
+    - Smartphone App
+    - Mobile Commerce
+
+- id: social_commerce
+  canonicalName: Social Commerce
+  aliases:
+    - Social Media Shopping
+    - Buy on Social
+
+- id: marketplace
+  canonicalName: Marketplace
+  aliases:
+    - Third-Party Marketplace
+    - Amazon
+    - eBay
+
+- id: curbside
+  canonicalName: Curbside Pickup
+  aliases:
+    - BOPIS
+    - Buy Online Pick Up In Store
+
+- id: subscription
+  canonicalName: Subscription
+  aliases:
+    - Subscription Box
+    - Recurring Purchase
