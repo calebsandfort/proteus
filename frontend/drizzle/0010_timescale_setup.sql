@@ -8,10 +8,15 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 -- ============================================================================
 -- CONVERT TRANSACTIONS TO HYPERTABLE
 -- FR-6.2: Daily chunk intervals for TimescaleDB partitioning
+-- TimescaleDB requires the partition column to be part of any unique index.
 -- ============================================================================
 
+-- Recreate PK as composite to include the partition column
+ALTER TABLE transactions DROP CONSTRAINT transactions_pkey;
+ALTER TABLE transactions ADD CONSTRAINT transactions_pkey PRIMARY KEY (id, transaction_timestamp);
+
 SELECT create_hypertable('transactions', 'transaction_timestamp',
-    chunk_interval => INTERVAL '1 day',
+    chunk_time_interval => INTERVAL '1 day',
     migrate_data => true,
     if_not_exists => TRUE
 );
@@ -19,8 +24,8 @@ SELECT create_hypertable('transactions', 'transaction_timestamp',
 -- Enable compression on the hypertable
 -- Segment by brand_id for better compression and query performance
 ALTER TABLE transactions SET (
-    timescaledb.compression,
-    timescaledb.compression_segmentby = 'brand_id'
+    timescaledb.compress = true,
+    timescaledb.compress_segmentby = 'brand_id'
 );
 
 -- ============================================================================
@@ -44,15 +49,15 @@ SELECT add_retention_policy('transactions', INTERVAL '7 years', if_not_exists =>
 
 -- Daily rollup aggregate (90-day retention)
 CREATE MATERIALIZED VIEW transactions_daily
-WITH (timescaledb.continuous, timescaledb.continuous_aggregate)
+WITH (timescaledb.continuous)
 AS
 SELECT
     time_bucket('1 day', transaction_timestamp) AS bucket,
     brand_id,
     category_id,
-    geography_id,
-    generation_id,
-    income_band_id,
+    transactions.geography_id,
+    transactions.generation_id,
+    transactions.income_band_id,
     card_type,
     payment_network,
     channel,
@@ -82,15 +87,15 @@ SELECT add_continuous_aggregate_policy('transactions_daily',
 
 -- Weekly rollup aggregate (2-year retention)
 CREATE MATERIALIZED VIEW transactions_weekly
-WITH (timescaledb.continuous, timescaledb.continuous_aggregate)
+WITH (timescaledb.continuous)
 AS
 SELECT
     time_bucket('7 days', transaction_timestamp) AS bucket,
     brand_id,
     category_id,
-    geography_id,
-    generation_id,
-    income_band_id,
+    transactions.geography_id,
+    transactions.generation_id,
+    transactions.income_band_id,
     card_type,
     payment_network,
     channel,
@@ -120,15 +125,15 @@ SELECT add_continuous_aggregate_policy('transactions_weekly',
 
 -- Monthly rollup aggregate (7-year retention)
 CREATE MATERIALIZED VIEW transactions_monthly
-WITH (timescaledb.continuous, timescaledb.continuous_aggregate)
+WITH (timescaledb.continuous)
 AS
 SELECT
     time_bucket('1 month', transaction_timestamp) AS bucket,
     brand_id,
     category_id,
-    geography_id,
-    generation_id,
-    income_band_id,
+    transactions.geography_id,
+    transactions.generation_id,
+    transactions.income_band_id,
     card_type,
     payment_network,
     channel,
@@ -157,8 +162,10 @@ SELECT add_continuous_aggregate_policy('transactions_monthly',
 );
 
 -- Market share daily aggregate (90-day retention)
+-- Window functions in continuous aggregates require this setting
+SET timescaledb.enable_cagg_window_functions = true;
 CREATE MATERIALIZED VIEW market_share_daily
-WITH (timescaledb.continuous, timescaledb.continuous_aggregate)
+WITH (timescaledb.continuous)
 AS
 SELECT
     time_bucket('1 day', transaction_timestamp) AS bucket,

@@ -26,10 +26,19 @@ echo "=== [4/6] Pushing database schema ==="
 # dotenv/config in drizzle.config.ts won't override the already-set DATABASE_URL.
 direnv exec "${WORKTREE_ROOT}" sh -c "cd ${WORKTREE_ROOT}/frontend && pnpm drizzle-kit push"
 
+echo "=== [4b/6] Applying TimescaleDB hypertable + continuous aggregates ==="
+POSTGRES_DB=$(grep -E '^POSTGRES_DB=' "${WORKTREE_ROOT}/.env" | cut -d= -f2- | tr -d '"' || echo "boilerplate")
+docker compose $ENV_FLAGS exec -T db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+  -f /dev/stdin < "${WORKTREE_ROOT}/frontend/drizzle/0010_timescale_setup.sql"
+
+echo "=== [4c/6] Seeding dimension data ==="
+docker compose $ENV_FLAGS exec -T db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+  -f /dev/stdin < "${WORKTREE_ROOT}/frontend/drizzle/0011_seed_dimensions.sql"
+
 echo "=== [5/6] Syncing backend deps ==="
 cd "${WORKTREE_ROOT}/backend" && uv sync
 
-echo "=== [6/6] Restoring api deps ==="
+echo "=== [6/6] Restoring API deps ==="
 cd "${WORKTREE_ROOT}/api" && dotnet restore
 
 echo "=== Setup complete ==="
