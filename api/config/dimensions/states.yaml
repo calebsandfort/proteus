@@ -1,0 +1,124 @@
+- id: CA
+  canonicalName: California
+  aliases:
+    - Cal
+    - CA
+
+- id: TX
+  canonicalName: Texas
+  aliases:
+    - Tex
+    - TX
+    - The Lone Star State
+
+- id: FL
+  canonicalName: Florida
+  aliases:
+    - Fla
+    - FL
+    - The Sunshine State
+
+- id: NY
+  canonicalName: New York
+  aliases:
+    - NY
+    - New York State
+    - Empire State
+
+- id: PA
+  canonicalName: Pennsylvania
+  aliases:
+    - Penn
+    - PA
+    - Keystone State
+
+- id: IL
+  canonicalName: Illinois
+  aliases:
+    - Ill
+    - IL
+    - Prairie State
+
+- id: OH
+  canonicalName: Ohio
+  aliases:
+    - OH
+    - Buckeye State
+
+- id: GA
+  canonicalName: Georgia
+  aliases:
+    - GA
+    - Peach State
+
+- id: NC
+  canonicalName: North Carolina
+  aliases:
+    - NC
+    - Tar Heel State
+
+- id: MI
+  canonicalName: Michigan
+  aliases:
+    - MI
+    - Wolverine State
+
+- id: NJ
+  canonicalName: New Jersey
+  aliases:
+    - NJ
+    - Garden State
+
+- id: VA
+  canonicalName: Virginia
+  aliases:
+    - VA
+    - Old Dominion
+
+- id: WA
+  canonicalName: Washington
+  aliases:
+    - WA
+    - Evergreen State
+
+- id: AZ
+  canonicalName: Arizona
+  aliases:
+    - AZ
+    - Grand Canyon State
+
+- id: MA
+  canonicalName: Massachusetts
+  aliases:
+    - MA
+    - Bay State
+
+- id: TN
+  canonicalName: Tennessee
+  aliases:
+    - TN
+    - Volunteer State
+
+- id: IN
+  canonicalName: Indiana
+  aliases:
+    - IN
+    - Hoosier State
+
+- id: MO
+  canonicalName: Missouri
+  aliases:
+    - MO
+    - Show Me State
+
+- id: MD
+  canonicalName: Maryland
+  aliases:
+    - MD
+    - Old Line State
+
+- id: WI
+  canonicalName: Wisconsin
+  aliases:
+    - WI
+    - Badger State

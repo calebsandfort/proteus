@@ -1,0 +1,66 @@
+- id: athletic_footwear
+  canonicalName: Athletic Footwear
+  aliases:
+    - Sports Shoes
+    - Running Shoes
+    - Sneakers
+
+- id: athletic_apparel
+  canonicalName: Athletic Apparel
+  aliases:
+    - Sports Clothing
+    - Workout Clothes
+    - Gym Wear
+
+- id: consumer_electronics
+  canonicalName: Consumer Electronics
+  aliases:
+    - Electronics
+    - Tech
+    - Gadgets
+
+- id: smartphones
+  canonicalName: Smartphones
+  aliases:
+    - Mobile Phones
+    - Cell Phones
+    - Phones
+
+- id: beverages
+  canonicalName: Beverages
+  aliases:
+    - Drinks
+    - Soft Drinks
+
+- id: snacks
+  canonicalName: Snacks
+  aliases:
+    - Snack Foods
+    - Chips
+    - Candy
+
+- id: automotive
+  canonicalName: Automotive
+  aliases:
+    - Cars
+    - Vehicles
+    - Auto Parts
+
+- id: home_appliances
+  canonicalName: Home Appliances
+  aliases:
+    - Appliances
+    - Kitchen Appliances
+
+- id: furniture
+  canonicalName: Furniture
+  aliases:
+    - Home Furniture
+    - Office Furniture
+
+- id: beauty_personal_care
+  canonicalName: Beauty & Personal Care
+  aliases:
+    - Cosmetics
+    - Personal Care
+    - Skincare

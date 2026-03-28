@@ -1,0 +1,37 @@
+- id: monday
+  canonicalName: Monday
+  aliases:
+    - Mon
+
+- id: tuesday
+  canonicalName: Tuesday
+  aliases:
+    - Tue
+    - Tues
+
+- id: wednesday
+  canonicalName: Wednesday
+  aliases:
+    - Wed
+    - Weds
+
+- id: thursday
+  canonicalName: Thursday
+  aliases:
+    - Thu
+    - Thurs
+
+- id: friday
+  canonicalName: Friday
+  aliases:
+    - Fri
+
+- id: saturday
+  canonicalName: Saturday
+  aliases:
+    - Sat
+
+- id: sunday
+  canonicalName: Sunday
+  aliases:
+    - Sun
