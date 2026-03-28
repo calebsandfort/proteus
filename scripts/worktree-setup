@@ -14,7 +14,7 @@ docker compose $ENV_FLAGS down db 2>/dev/null || true
 docker compose $ENV_FLAGS up db -d
 
 echo "=== [2/6] Waiting for database ==="
-until docker compose $ENV_FLAGS exec -T db pg_isready -U "$POSTGRES_USER" 2>/dev/null; do
+until [ "$(docker inspect --format='{{.State.Health.Status}}' "$(docker compose $ENV_FLAGS ps -q db)" 2>/dev/null)" = "healthy" ]; do
   sleep 2
 done
 
