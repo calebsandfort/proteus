@@ -17,8 +17,7 @@ import numpy as np
 # FR-6.6: Category-specific log-normal parameters (mu, sigma)
 CATEGORY_PARAMS: Dict[str, tuple[float, float]] = {
     'essential': (3.0, 0.8),
-    'value': (2.7, 0.7),    # Below essential - Walmart/value tier
-    'walmart': (2.5, 0.6),  # Lowest tier
+    'value': (2.7, 0.7),
     'mid_tier': (3.5, 1.0),
     'premium': (4.2, 1.2),
     'luxury': (4.5, 1.3),  # Above premium
@@ -43,7 +42,7 @@ def generate_transaction_amount(category_tier: str, income_band: str) -> float:
 
     Args:
         category_tier: The category tier for the transaction.
-            Must be one of: 'essential', 'value', 'walmart', 'mid_tier', 'premium', 'luxury', 'dining', 'fast_food'.
+            Must be one of: 'essential', 'value', 'mid_tier', 'premium', 'luxury', 'dining', 'fast_food'.
         income_band: The income band ID of the consumer.
             Must be one of: 'under_25k', '25k_50k', '50k_75k', '75k_100k',
             '100k_150k', '150k_200k', 'over_200k'.

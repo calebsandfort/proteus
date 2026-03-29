@@ -32,11 +32,13 @@ PREMIUM = 'premium'
 LUXURY = 'luxury'
 MID_TIER = 'mid_tier'
 VALUE = 'value'
-WALMART = 'walmart'
+ESSENTIAL = 'essential'
+DINING = 'dining'
+FAST_FOOD = 'fast_food'
 
 # Valid values
 VALID_GENERATIONS = {GEN_Z, MILLENNIAL, GEN_X, BOOMER}
-VALID_BRAND_TIERS = {PREMIUM, LUXURY, MID_TIER, VALUE, WALMART}
+VALID_BRAND_TIERS = {PREMIUM, LUXURY, MID_TIER, VALUE, ESSENTIAL, DINING, FAST_FOOD}
 
 # Categories
 RETAIL = 'retail'
@@ -129,7 +131,7 @@ HIGH_INCOME_PREMIUM = (0.70, 0.80)
 HIGH_INCOME_LUXURY = (0.55, 0.70)
 HIGH_INCOME_MID_TIER = (0.15, 0.25)
 HIGH_INCOME_VALUE = (0.00, 0.05)
-HIGH_INCOME_WALMART = 0.02  # <2%
+HIGH_INCOME_ESSENTIAL = 0.02  # <2%
 
 # Pearson correlation coefficients for premium/luxury brands
 PREMIUM_PEARSON_MIN = 0.45
@@ -198,49 +200,63 @@ INCOME_BRAND_PREFERENCES: Dict[str, Dict[str, tuple[float, float]]] = {
         LUXURY: (0.01, 0.03),
         MID_TIER: (0.25, 0.35),
         VALUE: (0.55, 0.65),
-        WALMART: (0.40, 0.50),
+        ESSENTIAL: (0.40, 0.50),
+        DINING: (0.10, 0.20),
+        FAST_FOOD: (0.35, 0.45),
     },
     '25k_50k': {
         PREMIUM: (0.10, 0.15),
         LUXURY: (0.03, 0.06),
         MID_TIER: (0.30, 0.40),
         VALUE: (0.45, 0.55),
-        WALMART: (0.30, 0.40),
+        ESSENTIAL: (0.30, 0.40),
+        DINING: (0.20, 0.30),
+        FAST_FOOD: (0.35, 0.45),
     },
     '50k_75k': {
         PREMIUM: (0.20, 0.30),
         LUXURY: (0.08, 0.15),
         MID_TIER: (0.35, 0.45),
         VALUE: (0.25, 0.35),
-        WALMART: (0.15, 0.25),
+        ESSENTIAL: (0.15, 0.25),
+        DINING: (0.30, 0.40),
+        FAST_FOOD: (0.30, 0.40),
     },
     '75k_100k': {
         PREMIUM: (0.35, 0.45),
         LUXURY: (0.15, 0.25),
         MID_TIER: (0.30, 0.40),
         VALUE: (0.10, 0.20),
-        WALMART: (0.08, 0.12),
+        ESSENTIAL: (0.08, 0.12),
+        DINING: (0.35, 0.45),
+        FAST_FOOD: (0.25, 0.35),
     },
     '100k_150k': {
         PREMIUM: (0.50, 0.60),
         LUXURY: (0.25, 0.35),
         MID_TIER: (0.20, 0.30),
         VALUE: (0.03, 0.08),
-        WALMART: (0.03, 0.06),
+        ESSENTIAL: (0.03, 0.06),
+        DINING: (0.40, 0.50),
+        FAST_FOOD: (0.20, 0.30),
     },
     '150k_200k': {
         PREMIUM: (0.65, 0.75),
         LUXURY: (0.45, 0.60),
         MID_TIER: (0.15, 0.25),
         VALUE: HIGH_INCOME_VALUE,
-        WALMART: (0.005, HIGH_INCOME_WALMART),
+        ESSENTIAL: (0.005, HIGH_INCOME_ESSENTIAL),
+        DINING: (0.35, 0.45),
+        FAST_FOOD: (0.15, 0.25),
     },
     'over_200k': {
         PREMIUM: HIGH_INCOME_PREMIUM,
         LUXURY: HIGH_INCOME_LUXURY,
         MID_TIER: HIGH_INCOME_MID_TIER,
         VALUE: HIGH_INCOME_VALUE,
-        WALMART: (0.005, HIGH_INCOME_WALMART),
+        ESSENTIAL: (0.005, HIGH_INCOME_ESSENTIAL),
+        DINING: (0.25, 0.35),
+        FAST_FOOD: (0.10, 0.20),
     },
 }
 
@@ -375,7 +391,7 @@ def get_income_brand_preference(
             Must be one of: 'under_25k', '25k_50k', '50k_75k', '75k_100k',
             '100k_150k', '150k_200k', 'over_200k'.
         brand_tier: The brand tier.
-            Must be one of: 'premium', 'luxury', 'mid_tier', 'value', 'walmart'.
+            Must be one of: 'premium', 'luxury', 'mid_tier', 'value', 'essential', 'dining', 'fast_food'.
 
     Returns:
         The brand preference weight (probability) for the income band/brand tier.

@@ -27,7 +27,7 @@ from dotenv import load_dotenv
 
 from src.data.panelist_generator import generate_panelists
 from src.data.transaction_generator import generate_transactions_for_panelist
-from src.data.validation import generate_validation_report
+from src.data.validation import generate_validation_report, Transaction as ValidationTransaction
 
 load_dotenv()
 
@@ -72,7 +72,7 @@ CATEGORY_SEED = [
 # category_name maps each brand to one of the category level1 values above
 BRAND_SEED = [
     # retail
-    {"name": "Walmart",          "tier": "walmart",   "archetype": "mass_market",   "category_name": "retail"},
+    {"name": "Walmart",          "tier": "essential", "archetype": "mass_market",   "category_name": "retail"},
     {"name": "Target",           "tier": "mid_tier",  "archetype": "mass_market",   "category_name": "retail"},
     {"name": "Dollar Tree",      "tier": "value",     "archetype": "discount",      "category_name": "retail"},
     {"name": "Dollar General",   "tier": "value",     "archetype": "discount",      "category_name": "retail"},
@@ -87,10 +87,10 @@ BRAND_SEED = [
     {"name": "Cheesecake Factory","tier": "dining",   "archetype": "casual_dining", "category_name": "dining"},
     {"name": "Texas Roadhouse",  "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
     # fast food
-    {"name": "McDonald's",       "tier": "fast_food", "archetype": "qsr",           "category_name": "fast_food"},
-    {"name": "Starbucks",        "tier": "fast_food", "archetype": "qsr",           "category_name": "fast_food"},
-    {"name": "Chick-fil-A",      "tier": "fast_food", "archetype": "qsr",           "category_name": "fast_food"},
-    {"name": "Chipotle",         "tier": "fast_food", "archetype": "fast_casual",   "category_name": "fast_food"},
+    {"name": "McDonald's",       "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
+    {"name": "Starbucks",        "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
+    {"name": "Chick-fil-A",      "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
+    {"name": "Chipotle",         "tier": "fast_food", "archetype": "fast_casual",   "category_name": "dining"},
     # apparel
     {"name": "Gap",              "tier": "mid_tier",  "archetype": "specialty",     "category_name": "apparel"},
     {"name": "H&M",              "tier": "value",     "archetype": "fast_fashion",  "category_name": "apparel"},
@@ -276,7 +276,7 @@ def _insert_transactions(cur: psycopg.Cursor, transactions: list) -> None:
             geography_id, generation_id, income_band_id, transaction_amount,
             card_type, payment_network, channel, day_of_week, hour_of_day
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (id) DO NOTHING
+        ON CONFLICT (id, transaction_timestamp) DO NOTHING
         """,
         rows,
     )
@@ -368,19 +368,31 @@ def main() -> None:
 
     # --- Validation report ---
     print("\n[Validation] Running data quality checks on sample...")
-    report = generate_validation_report(sample_txns)
-    print(f"  Overall pass     : {report.overall_pass}")
-    for metric_name, result in vars(report).items():
-        if metric_name == "overall_pass":
-            continue
-        status = "PASS" if getattr(result, "passed", None) else "FAIL"
-        value  = getattr(result, "value",  "n/a")
-        target = getattr(result, "target", "")
-        print(f"  {metric_name:<30} {status}  value={value}  target={target}")
+    brand_id_to_name = {b["id"]: b["name"] for b in brand_list}
+    cat_id_to_name = {v: k for k, v in category_map.items()}
+    validation_txns = [
+        ValidationTransaction(
+            transaction_id=t.id,
+            panelist_id=t.panelist_id,
+            date=t.transaction_timestamp,
+            amount=t.transaction_amount,
+            category=cat_id_to_name.get(t.category_id, "unknown"),
+            brand=brand_id_to_name.get(t.brand_id),
+        )
+        for t in sample_txns
+    ]
+    report = generate_validation_report(validation_txns)
+    print(f"  Overall pass     : {report.all_passed}")
+    print(f"  {'coefficient_of_variation':<30} value={report.coefficient_of_variation:.4f}")
+    print(f"  {'gini_coefficient':<30} value={report.gini_coefficient:.4f}")
+    print(f"  {'category_mad':<30} value={report.category_mad:.4f}")
+    print(f"  {'weekend_weekday_ratio':<30} value={report.weekend_weekday_ratio:.4f}")
+    print(f"  {'transaction_frequency_ok':<30} {'PASS' if report.transaction_frequency_ok else 'FAIL'}")
+    print(f"  {'zero_inflation_ok':<30} {'PASS' if report.zero_inflation_ok else 'FAIL'}")
 
     print()
     print("Done.")
-    sys.exit(0 if report.overall_pass else 1)
+    sys.exit(0 if report.all_passed else 1)
 
 
 if __name__ == "__main__":
