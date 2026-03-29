@@ -25,7 +25,7 @@ import numpy as np
 GEN_Z = 'gen_z'
 MILLENNIAL = 'millennial'
 GEN_X = 'gen_x'
-BOOMER = 'boomer'
+BOOMER = 'baby_boomer'
 
 # Brand tiers
 PREMIUM = 'premium'
@@ -50,9 +50,10 @@ SCHOOL = 'school'
 
 VALID_CATEGORIES = {RETAIL, GROCERY, DINING, APPAREL, HEALTHCARE, TRAVEL, HOME_IMPROVEMENT, SCHOOL}
 
-# Income band constants
-INCOME_BAND_MIN = 1
-INCOME_BAND_MAX = 6
+# Valid income band IDs (ordered low to high)
+INCOME_BAND_IDS = [
+    'under_25k', '25k_50k', '50k_75k', '75k_100k', '100k_150k', '150k_200k', 'over_200k',
+]
 
 
 # =============================================================================
@@ -190,44 +191,51 @@ GENERATION_CATEGORY_PREFERENCES: Dict[str, Dict[str, float]] = {
 # =============================================================================
 
 # Brand preference weights by income band
-# Format: income_band -> brand_tier -> (min_pref, max_pref)
-INCOME_BRAND_PREFERENCES: Dict[int, Dict[str, tuple[float, float]]] = {
-    1: {  # <$25K
+# Format: income_band_id -> brand_tier -> (min_pref, max_pref)
+INCOME_BRAND_PREFERENCES: Dict[str, Dict[str, tuple[float, float]]] = {
+    'under_25k': {
         PREMIUM: (0.05, 0.10),
         LUXURY: (0.01, 0.03),
         MID_TIER: (0.25, 0.35),
         VALUE: (0.55, 0.65),
         WALMART: (0.40, 0.50),
     },
-    2: {  # $25K-$50K
+    '25k_50k': {
         PREMIUM: (0.10, 0.15),
         LUXURY: (0.03, 0.06),
         MID_TIER: (0.30, 0.40),
         VALUE: (0.45, 0.55),
         WALMART: (0.30, 0.40),
     },
-    3: {  # $50K-$75K
+    '50k_75k': {
         PREMIUM: (0.20, 0.30),
         LUXURY: (0.08, 0.15),
         MID_TIER: (0.35, 0.45),
         VALUE: (0.25, 0.35),
         WALMART: (0.15, 0.25),
     },
-    4: {  # $75K-$100K
+    '75k_100k': {
         PREMIUM: (0.35, 0.45),
         LUXURY: (0.15, 0.25),
         MID_TIER: (0.30, 0.40),
         VALUE: (0.10, 0.20),
         WALMART: (0.08, 0.12),
     },
-    5: {  # $100K-$150K
+    '100k_150k': {
         PREMIUM: (0.50, 0.60),
         LUXURY: (0.25, 0.35),
         MID_TIER: (0.20, 0.30),
         VALUE: (0.03, 0.08),
         WALMART: (0.03, 0.06),
     },
-    6: {  # $150K+
+    '150k_200k': {
+        PREMIUM: (0.65, 0.75),
+        LUXURY: (0.45, 0.60),
+        MID_TIER: (0.15, 0.25),
+        VALUE: HIGH_INCOME_VALUE,
+        WALMART: (0.005, HIGH_INCOME_WALMART),
+    },
+    'over_200k': {
         PREMIUM: HIGH_INCOME_PREMIUM,
         LUXURY: HIGH_INCOME_LUXURY,
         MID_TIER: HIGH_INCOME_MID_TIER,
@@ -357,15 +365,15 @@ def get_generation_preference(
 
 
 def get_income_brand_preference(
-    income_band: int,
+    income_band: str,
     brand_tier: str
 ) -> float:
     """Get brand preference weight for income band and brand tier.
 
     Args:
-        income_band: The income band (1-6).
-            1 = <$25K, 2 = $25K-$50K, 3 = $50K-$75K,
-            4 = $75K-$100K, 5 = $100K-$150K, 6 = $150K+
+        income_band: The income band ID.
+            Must be one of: 'under_25k', '25k_50k', '50k_75k', '75k_100k',
+            '100k_150k', '150k_200k', 'over_200k'.
         brand_tier: The brand tier.
             Must be one of: 'premium', 'luxury', 'mid_tier', 'value', 'walmart'.
 
@@ -375,11 +383,11 @@ def get_income_brand_preference(
         purchases in that brand tier for the given income band.
 
     Raises:
-        ValueError: If income_band is not 1-6 or brand_tier is not recognized.
+        ValueError: If income_band or brand_tier is not recognized.
     """
-    if income_band not in range(INCOME_BAND_MIN, INCOME_BAND_MAX + 1):
+    if income_band not in INCOME_BRAND_PREFERENCES:
         raise ValueError(
-            f"Invalid income band: {income_band}. Must be 1-6."
+            f"Invalid income band: {income_band}. Must be one of: {INCOME_BAND_IDS}"
         )
 
     if brand_tier not in VALID_BRAND_TIERS:
@@ -426,9 +434,8 @@ def calculate_brand_income_correlation(
         )
 
     # Simulate brand preference data across income bands
-    # Generate synthetic purchase data
-    income_bands = np.array(list(range(INCOME_BAND_MIN, INCOME_BAND_MAX + 1)))
-    n_samples_per_band = 100
+    # Generate synthetic purchase data using ordinal positions (1-7) for correlation math
+    income_band_ordinals = np.array(list(range(1, len(INCOME_BAND_IDS) + 1)))
 
     # Generate correlated preferences
     # Higher income -> higher preference for premium/luxury
@@ -436,8 +443,8 @@ def calculate_brand_income_correlation(
 
     for _ in range(100):  # Bootstrap for stability
         preferences = []
-        for band in income_bands:
-            pref = get_income_brand_preference(band, brand_tier)
+        for band_id in INCOME_BAND_IDS:
+            pref = get_income_brand_preference(band_id, brand_tier)
             # Add noise and scale to create variance
             noise = np.random.normal(0, 0.05)
             scaled_pref = pref * 100 + noise
@@ -445,14 +452,13 @@ def calculate_brand_income_correlation(
 
         preferences = np.array(preferences)
 
-        # Calculate Pearson correlation with income
-        # Income bands 1-6, preferences vary by brand tier
-        mean_income = np.mean(income_bands)
+        # Calculate Pearson correlation with income ordinals
+        mean_income = np.mean(income_band_ordinals)
         mean_pref = np.mean(preferences)
 
-        numerator = np.sum((income_bands - mean_income) * (preferences - mean_pref))
+        numerator = np.sum((income_band_ordinals - mean_income) * (preferences - mean_pref))
         denominator = np.sqrt(
-            np.sum((income_bands - mean_income) ** 2) *
+            np.sum((income_band_ordinals - mean_income) ** 2) *
             np.sum((preferences - mean_pref) ** 2)
         )
 

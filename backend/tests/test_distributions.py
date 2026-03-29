@@ -18,12 +18,13 @@ CATEGORY_PARAMS = {
 }
 
 INCOME_MULTIPLIERS = {
-    1: 0.6,   # <$25K
-    2: 0.8,
-    3: 1.0,
-    4: 1.2,
-    5: 1.4,
-    6: 1.7,   # $150K+
+    'under_25k': 0.6,
+    '25k_50k': 0.8,
+    '50k_75k': 1.0,
+    '75k_100k': 1.2,
+    '100k_150k': 1.4,
+    '150k_200k': 1.55,
+    'over_200k': 1.7,
 }
 
 SEED = 42
@@ -38,7 +39,7 @@ class TestFr66LogNormalEssential:
 
         np.random.seed(SEED)
         mu, sigma = CATEGORY_PARAMS['essential']
-        amount = generate_transaction_amount('essential', income_band=3)
+        amount = generate_transaction_amount('essential', income_band='50k_75k')
 
         # With income_band=3, multiplier is 1.0, so amount should be from lognormal(mu, sigma)
         expected_mean = np.exp(mu + sigma**2 / 2)
@@ -55,7 +56,7 @@ class TestFr66LogNormalMidTier:
 
         np.random.seed(SEED)
         mu, sigma = CATEGORY_PARAMS['mid_tier']
-        amount = generate_transaction_amount('mid_tier', income_band=3)
+        amount = generate_transaction_amount('mid_tier', income_band='50k_75k')
 
         expected_mean = np.exp(mu + sigma**2 / 2)
         assert abs(amount - expected_mean) / expected_mean < 0.2
@@ -70,7 +71,7 @@ class TestFr66LogNormalPremium:
 
         np.random.seed(SEED)
         mu, sigma = CATEGORY_PARAMS['premium']
-        amount = generate_transaction_amount('premium', income_band=3)
+        amount = generate_transaction_amount('premium', income_band='50k_75k')
 
         expected_mean = np.exp(mu + sigma**2 / 2)
         assert abs(amount - expected_mean) / expected_mean < 0.2
@@ -85,7 +86,7 @@ class TestFr66LogNormalDining:
 
         np.random.seed(SEED)
         mu, sigma = CATEGORY_PARAMS['dining']
-        amount = generate_transaction_amount('dining', income_band=3)
+        amount = generate_transaction_amount('dining', income_band='50k_75k')
 
         expected_mean = np.exp(mu + sigma**2 / 2)
         assert abs(amount - expected_mean) / expected_mean < 0.2
@@ -100,7 +101,7 @@ class TestFr66LogNormalFastFood:
 
         np.random.seed(SEED)
         mu, sigma = CATEGORY_PARAMS['fast_food']
-        amount = generate_transaction_amount('fast_food', income_band=3)
+        amount = generate_transaction_amount('fast_food', income_band='50k_75k')
 
         expected_mean = np.exp(mu + sigma**2 / 2)
         assert abs(amount - expected_mean) / expected_mean < 0.2
@@ -122,7 +123,7 @@ class TestFr66IncomeMultipliers:
 
         # Generate many samples and check average is close
         np.random.seed(SEED)
-        samples = [generate_transaction_amount('essential', income_band=1) for _ in range(1000)]
+        samples = [generate_transaction_amount('essential', income_band='under_25k') for _ in range(1000)]
         actual_mean = np.mean(samples)
 
         # Within 15% of expected
@@ -142,7 +143,7 @@ class TestFr66IncomeMultipliers:
 
         # Generate many samples and check average is close
         np.random.seed(SEED)
-        samples = [generate_transaction_amount('essential', income_band=6) for _ in range(1000)]
+        samples = [generate_transaction_amount('essential', income_band='over_200k') for _ in range(1000)]
         actual_mean = np.mean(samples)
 
         # Within 15% of expected
@@ -156,7 +157,7 @@ class TestFr66IncomeMultipliers:
         np.random.seed(SEED)
 
         # Generate base amount with band 3 (multiplier = 1.0)
-        base_amount = generate_transaction_amount('essential', income_band=3)
+        base_amount = generate_transaction_amount('essential', income_band='50k_75k')
 
         for band, expected_multiplier in INCOME_MULTIPLIERS.items():
             np.random.seed(SEED)  # Reset seed for fair comparison
@@ -195,44 +196,44 @@ class TestFr66SampleIncomeBand:
     """FR-6.6: Sample income band from probabilities."""
 
     def test_fr_6_6_sample_income_band_basic(self) -> None:
-        """Basic sampling returns valid income bands."""
-        from src.data.distributions import sample_income_band
+        """Basic sampling returns valid income band string IDs."""
+        from src.data.distributions import sample_income_band, INCOME_BAND_IDS
 
-        # Equal probabilities for all 6 bands
-        probabilities = [1/6] * 6
+        # Equal probabilities for all 7 bands
+        probabilities = [1/7] * 7
         np.random.seed(SEED)
 
         for _ in range(100):
             band = sample_income_band(probabilities)
-            assert 1 <= band <= 6
+            assert band in INCOME_BAND_IDS, f"Band '{band}' not in {INCOME_BAND_IDS}"
 
     def test_fr_6_6_sample_income_band_weighted(self) -> None:
         """Weighted sampling favors higher probability bands."""
         from src.data.distributions import sample_income_band
 
-        # Strongly favor band 6
-        probabilities = [0.05, 0.05, 0.1, 0.1, 0.2, 0.5]
+        # Strongly favor over_200k (last band)
+        probabilities = [0.05, 0.05, 0.05, 0.10, 0.10, 0.15, 0.50]
         np.random.seed(SEED)
 
         samples = [sample_income_band(probabilities) for _ in range(1000)]
-        band_6_count = samples.count(6)
+        top_band_count = samples.count('over_200k')
 
-        # Band 6 should be sampled more than 40% of the time
-        assert band_6_count > 400, f"Expected >400 band 6 samples, got {band_6_count}"
+        # over_200k should be sampled more than 40% of the time
+        assert top_band_count > 400, f"Expected >400 over_200k samples, got {top_band_count}"
 
     def test_fr_6_6_sample_income_band_invalid_probabilities(self) -> None:
         """Invalid probability length should raise ValueError."""
         from src.data.distributions import sample_income_band
 
         with pytest.raises(ValueError):
-            sample_income_band([0.5, 0.5])  # Only 2 elements, need 6
+            sample_income_band([0.5, 0.5])  # Only 2 elements, need 7
 
     def test_fr_6_6_sample_income_band_negative_prob(self) -> None:
         """Negative probabilities should raise ValueError."""
         from src.data.distributions import sample_income_band
 
         with pytest.raises(ValueError):
-            sample_income_band([-0.1, 0.3, 0.3, 0.2, 0.2, 0.1])
+            sample_income_band([-0.1, 0.3, 0.2, 0.2, 0.1, 0.15, 0.15])
 
 
 class TestFr66SamplePanelWeight:
@@ -307,18 +308,20 @@ class TestFr66Constants:
         assert CATEGORY_PARAMS['fast_food'] == (2.2, 0.6)
 
     def test_fr_6_6_income_multipliers_keys(self) -> None:
-        """All required income band keys exist (1-6)."""
+        """All required income band keys exist (7 descriptive string IDs)."""
         from src.data.distributions import INCOME_MULTIPLIERS
 
-        assert set(INCOME_MULTIPLIERS.keys()) == {1, 2, 3, 4, 5, 6}
+        assert set(INCOME_MULTIPLIERS.keys()) == {
+            'under_25k', '25k_50k', '50k_75k', '75k_100k', '100k_150k', '150k_200k', 'over_200k'
+        }
 
     def test_fr_6_6_income_multipliers_values(self) -> None:
         """Income multipliers match FR-6.6 specification."""
         from src.data.distributions import INCOME_MULTIPLIERS
 
-        assert INCOME_MULTIPLIERS[1] == 0.6   # <$25K
-        assert INCOME_MULTIPLIERS[2] == 0.8
-        assert INCOME_MULTIPLIERS[3] == 1.0
-        assert INCOME_MULTIPLIERS[4] == 1.2
-        assert INCOME_MULTIPLIERS[5] == 1.4
-        assert INCOME_MULTIPLIERS[6] == 1.7   # $150K+
+        assert INCOME_MULTIPLIERS['under_25k'] == 0.6   # <$25K
+        assert INCOME_MULTIPLIERS['50k_75k'] == 1.0     # baseline
+        assert INCOME_MULTIPLIERS['over_200k'] == 1.7   # $200K+
+        # Multipliers increase monotonically with income
+        values = list(INCOME_MULTIPLIERS.values())
+        assert values == sorted(values), "Multipliers should increase with income"

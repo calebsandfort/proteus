@@ -27,31 +27,32 @@ CATEGORY_PARAMS: Dict[str, tuple[float, float]] = {
 }
 
 # FR-6.6: Income multipliers by band
-INCOME_MULTIPLIERS: Dict[int, float] = {
-    1: 0.6,   # <$25K
-    2: 0.8,
-    3: 1.0,
-    4: 1.2,
-    5: 1.4,
-    6: 1.7,   # $150K+
+INCOME_MULTIPLIERS: Dict[str, float] = {
+    'under_25k': 0.6,
+    '25k_50k': 0.8,
+    '50k_75k': 1.0,
+    '75k_100k': 1.2,
+    '100k_150k': 1.4,
+    '150k_200k': 1.55,
+    'over_200k': 1.7,
 }
 
 
-def generate_transaction_amount(category_tier: str, income_band: int) -> float:
+def generate_transaction_amount(category_tier: str, income_band: str) -> float:
     """Generate log-normal transaction amount with income multiplier.
 
     Args:
         category_tier: The category tier for the transaction.
             Must be one of: 'essential', 'value', 'walmart', 'mid_tier', 'premium', 'luxury', 'dining', 'fast_food'.
-        income_band: The income band (1-6) of the consumer.
-            1 = <$25K, 2 = $25K-$50K, 3 = $50K-$75K, 4 = $75K-$100K,
-            5 = $100K-$150K, 6 = $150K+
+        income_band: The income band ID of the consumer.
+            Must be one of: 'under_25k', '25k_50k', '50k_75k', '75k_100k',
+            '100k_150k', '150k_200k', 'over_200k'.
 
     Returns:
         The transaction amount as a positive float.
 
     Raises:
-        ValueError: If category_tier is not recognized or income_band is not 1-6.
+        ValueError: If category_tier is not recognized or income_band is not a valid ID.
     """
     if category_tier not in CATEGORY_PARAMS:
         raise ValueError(
@@ -61,7 +62,7 @@ def generate_transaction_amount(category_tier: str, income_band: int) -> float:
 
     if income_band not in INCOME_MULTIPLIERS:
         raise ValueError(
-            f"Invalid income band: {income_band}. Must be 1-6."
+            f"Invalid income band: {income_band}. Must be one of: {list(INCOME_MULTIPLIERS.keys())}"
         )
 
     mu, sigma = CATEGORY_PARAMS[category_tier]
@@ -76,23 +77,29 @@ def generate_transaction_amount(category_tier: str, income_band: int) -> float:
     return float(final_amount)
 
 
-def sample_income_band(probabilities: List[float]) -> int:
+INCOME_BAND_IDS = [
+    'under_25k', '25k_50k', '50k_75k', '75k_100k', '100k_150k', '150k_200k', 'over_200k',
+]
+
+
+def sample_income_band(probabilities: List[float]) -> str:
     """Sample income band from given probabilities.
 
     Args:
-        probabilities: A list of 6 probabilities corresponding to income bands 1-6.
+        probabilities: A list of 7 probabilities corresponding to income bands
+            ['under_25k', '25k_50k', '50k_75k', '75k_100k', '100k_150k', '150k_200k', 'over_200k'].
             The probabilities should sum to 1.0 (will be normalized if not).
 
     Returns:
-        The sampled income band (1-6) as an integer.
+        The sampled income band ID as a string.
 
     Raises:
-        ValueError: If the length of probabilities is not 6.
+        ValueError: If the length of probabilities is not 7.
         ValueError: If any probability is negative.
     """
-    if len(probabilities) != 6:
+    if len(probabilities) != 7:
         raise ValueError(
-            f"Expected 6 probabilities, got {len(probabilities)}"
+            f"Expected 7 probabilities, got {len(probabilities)}"
         )
 
     for p in probabilities:
@@ -105,12 +112,9 @@ def sample_income_band(probabilities: List[float]) -> int:
     probs = np.array(probabilities)
     probs = probs / probs.sum()
 
-    # Sample from multinomial distribution
-    # np.random.choice with replace=True gives us discrete sampling
-    bands = np.arange(1, 7)  # [1, 2, 3, 4, 5, 6]
-    sampled_idx = np.random.choice(a=6, p=probs)
+    sampled_idx = np.random.choice(a=7, p=probs)
 
-    return int(bands[sampled_idx])
+    return INCOME_BAND_IDS[sampled_idx]
 
 
 def sample_panel_weight(

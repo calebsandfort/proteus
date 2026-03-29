@@ -36,7 +36,7 @@ PAYMENT_NETWORKS = ["visa", "mastercard", "amex", "discover"]
 PAYMENT_NETWORK_WEIGHTS = [0.40, 0.35, 0.15, 0.10]
 
 # Channels
-CHANNELS = ["in-store", "online", "mobile"]
+CHANNELS = ["in_store", "online", "mobile_app"]
 CHANNEL_WEIGHTS = [0.55, 0.35, 0.10]
 
 # Day names for weekday()
@@ -58,12 +58,12 @@ class Transaction:
         category_id: Category identifier.
         geography_id: Geographic region identifier.
         generation_id: Generation identifier ('gen_z', 'millennial', 'gen_x', 'boomer').
-        income_band_id: Income band (1-6).
+        income_band_id: Income band ID ('under_25k', '25k_50k', etc.).
         transaction_timestamp: Date and time of the transaction.
         transaction_amount: Amount in dollars.
         card_type: Type of card used ('credit', 'debit', 'prepaid').
         payment_network: Payment network ('visa', 'mastercard', 'amex', 'discover').
-        channel: Purchase channel ('in-store', 'online', 'mobile').
+        channel: Purchase channel ('in_store', 'online', 'mobile_app').
         day_of_week: Day of week name.
         hour_of_day: Hour of day (0-23).
     """
@@ -73,7 +73,7 @@ class Transaction:
     category_id: int
     geography_id: int
     generation_id: str
-    income_band_id: int
+    income_band_id: str
     transaction_timestamp: datetime
     transaction_amount: float
     card_type: str
@@ -275,7 +275,7 @@ def generate_transactions_for_panelist(
 
 
 def _select_brand_for_income(
-    income_band: int,
+    income_band: str,
     brand_choices: List[tuple]
 ) -> tuple:
     """Select a brand based on income-brand correlation.
@@ -284,7 +284,7 @@ def _select_brand_for_income(
     based on the panelist's income band.
 
     Args:
-        income_band: Income band (1-6).
+        income_band: Income band ID (e.g., 'under_25k', '100k_150k').
         brand_choices: List of (brand_id, tier, category_id) tuples.
 
     Returns:

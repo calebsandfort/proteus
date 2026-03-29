@@ -16,7 +16,7 @@ SEED = 42
 GEN_Z = 'gen_z'
 MILLENNIAL = 'millennial'
 GEN_X = 'gen_x'
-BOOMER = 'boomer'
+BOOMER = 'baby_boomer'
 
 # Brand tiers
 PREMIUM = 'premium'
@@ -25,8 +25,8 @@ MID_TIER = 'mid_tier'
 VALUE = 'value'
 WALMART = 'walmart'
 
-# Income bands (1-6, where 6 is $150K+)
-INCOME_BAND_HIGH = 6  # $150K+
+# Income bands (descriptive string IDs)
+INCOME_BAND_HIGH = 'over_200k'  # $200K+
 
 # Categories
 RETAIL = 'retail'
@@ -422,7 +422,7 @@ class TestFr67Integration:
         from src.data.seasonal_patterns import get_income_brand_preference
 
         np.random.seed(SEED)
-        low_income_walmart = get_income_brand_preference(1, WALMART)  # Income band 1
+        low_income_walmart = get_income_brand_preference('under_25k', WALMART)  # Lowest income band
         high_income_walmart = get_income_brand_preference(INCOME_BAND_HIGH, WALMART)
 
         assert low_income_walmart > high_income_walmart, \

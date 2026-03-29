@@ -19,7 +19,7 @@ class MockPanelist:
     def __init__(
         self,
         id: str = "test-panelist-1",
-        income_band_id: int = 3,
+        income_band_id: str = "50k_75k",
         generation_id: str = "millennial",
         geography_id: int = 1,
         panel_start_date: date = None,
@@ -85,7 +85,7 @@ class TestFr66TransactionAmounts:
         from src.data.transaction_generator import generate_transactions_for_panelist
         from src.data.distributions import CATEGORY_PARAMS
 
-        panelist = MockPanelist(income_band_id=3)  # multiplier = 1.0
+        panelist = MockPanelist(income_band_id='50k_75k')  # multiplier = 1.0
         # Use essential tier with known parameters
         brands = [MockBrand(brand_id=1, brand_tier="essential", category_id=1)]
         categories = [MockCategory(category_id=1, category_name="retail")]
@@ -123,9 +123,9 @@ class TestFr66TransactionAmounts:
         categories = [MockCategory(category_id=1, category_name="retail")]
         geography_lookup = {1: "northeast"}
 
-        # Compare band 1 vs band 6
-        panelist_band1 = MockPanelist(id="p1", income_band_id=1)
-        panelist_band6 = MockPanelist(id="p2", income_band_id=6)
+        # Compare under_25k vs over_200k
+        panelist_band1 = MockPanelist(id="p1", income_band_id='under_25k')
+        panelist_band6 = MockPanelist(id="p2", income_band_id='over_200k')
 
         np.random.seed(SEED)
         txns_band1 = list(generate_transactions_for_panelist(
@@ -158,7 +158,7 @@ class TestFr66TransactionAmounts:
 
         # The ratio should be roughly 1.7/0.6 = 2.83 (within tolerance)
         ratio = mean_band6 / mean_band1
-        expected_ratio = INCOME_MULTIPLIERS[6] / INCOME_MULTIPLIERS[1]  # 1.7/0.6 = 2.83
+        expected_ratio = INCOME_MULTIPLIERS['over_200k'] / INCOME_MULTIPLIERS['under_25k']  # 1.7/0.6 = 2.83
         assert abs(ratio - expected_ratio) / expected_ratio < 0.40, \
             f"Ratio {ratio:.2f} differs too much from expected {expected_ratio:.2f}"
 
@@ -334,9 +334,9 @@ class TestFr67IncomeBrandCorrelation:
         geography_lookup = {1: "northeast"}
 
         # Low income panelist
-        low_income_panelist = MockPanelist(id="low", income_band_id=1)
+        low_income_panelist = MockPanelist(id="low", income_band_id='under_25k')
         # High income panelist
-        high_income_panelist = MockPanelist(id="high", income_band_id=6)
+        high_income_panelist = MockPanelist(id="high", income_band_id='over_200k')
 
         np.random.seed(SEED)
         low_income_txns = list(generate_transactions_for_panelist(

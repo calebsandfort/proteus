@@ -6,39 +6,30 @@
     - Post-Millennials
     - iGen
 
-- id: millennials
+- id: millennial
   canonicalName: Millennials
   aliases:
     - Gen Y
-    - Millennials
-    - Generation Millennials
+    - Generation Y
     - Echo Boomers
 
 - id: gen_x
   canonicalName: Generation X
   aliases:
     - Gen X
-    - Generation X
     - MTV Generation
     - Latchkey Generation
 
-- id: baby_boomers
+- id: baby_boomer
   canonicalName: Baby Boomers
   aliases:
     - Boomers
     - Gen Boomer
     - Post-Silent Generation
 
-- id: silent_generation
+- id: silent
   canonicalName: Silent Generation
   aliases:
     - The Silent Generation
     - Traditionalists
     - Radio Babies
-
-- id: gen_alpha
-  canonicalName: Generation Alpha
-  aliases:
-    - Gen Alpha
-    - Generation Alpha
-    - Gen A

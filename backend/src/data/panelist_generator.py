@@ -38,16 +38,17 @@ DEFAULT_GENERATION_DISTRIBUTION: Dict[str, float] = {
     "gen_z": 0.12,
     "millennial": 0.26,
     "gen_x": 0.30,
-    "boomer": 0.32,
+    "baby_boomer": 0.32,
 }
 
 DEFAULT_INCOME_DISTRIBUTION: List[float] = [
-    0.12,  # Band 1: <$25K
-    0.18,  # Band 2: $25K-$50K
-    0.22,  # Band 3: $50K-$75K
-    0.20,  # Band 4: $75K-$100K
-    0.18,  # Band 5: $100K-$150K
-    0.10,  # Band 6: $150K+
+    0.12,  # under_25k: <$25K
+    0.18,  # 25k_50k: $25K-$50K
+    0.22,  # 50k_75k: $50K-$75K
+    0.20,  # 75k_100k: $75K-$100K
+    0.18,  # 100k_150k: $100K-$150K
+    0.07,  # 150k_200k: $150K-$200K
+    0.03,  # over_200k: $200K+
 ]
 
 
@@ -67,7 +68,7 @@ class Panelist:
         panel_weight: Statistical weight for panel representativeness.
     """
     id: str
-    income_band_id: int
+    income_band_id: str
     generation_id: str
     geography_id: int
     panel_start_date: date
@@ -111,8 +112,8 @@ def generate_panelists(
     inc_dist = income_distribution or DEFAULT_INCOME_DISTRIBUTION
 
     # Validate income distribution
-    if len(inc_dist) != 6:
-        raise ValueError(f"Income distribution must have 6 elements, got {len(inc_dist)}")
+    if len(inc_dist) != 7:
+        raise ValueError(f"Income distribution must have 7 elements, got {len(inc_dist)}")
 
     if sum(inc_dist) <= 0:
         raise ValueError("Income distribution must sum to positive value")
