@@ -1,0 +1,53 @@
+tools:
+  - id: basket_analysis
+    name: Basket Analysis
+    description: Co-purchase patterns and item affinity. Analyzes which products are frequently purchased together in the same transaction.
+    capabilities:
+      - Identify co-purchase patterns
+      - Calculate item affinity scores
+      - Show basket composition
+      - Support product placement insights
+    required_dimensions:
+      - category
+    optional_dimensions:
+      - time_period
+      - geography
+    parameters:
+      - name: category
+        type: string
+        description: Product category for analysis
+        required: true
+      - name: anchor_brand
+        type: string
+        description: Optional anchor brand for focused analysis
+        required: false
+      - name: min_support
+        type: number
+        description: Minimum support threshold (0-1)
+        required: false
+    output_schema:
+      format: json
+      description: Returns basket analysis metrics
+      fields:
+        - name: item_pair
+          type: string
+          description: Item pair (Item A + Item B)
+        - name: support
+          type: number
+          description: Co-purchase support percentage
+        - name: confidence
+          type: number
+          description: Conditional probability
+        - name: lift
+          type: number
+          description: Affinity lift vs random
+    example_queries:
+      - "What items are frequently purchased together?"
+      - "Show me basket analysis for convenience store"
+      - "What products have high affinity with Coca-Cola?"
+    aliases:
+      - basket
+      - affinity
+      - co_purchase
+      - item_affinity
+    version: "1.0.0"

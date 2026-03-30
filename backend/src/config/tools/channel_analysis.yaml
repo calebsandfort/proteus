@@ -1,0 +1,57 @@
+tools:
+  - id: channel_analysis
+    name: Channel Analysis
+    description: Online vs. in-store vs. mobile breakdown. Analyzes how customers shop across different purchase channels.
+    capabilities:
+      - Break down by purchase channel
+      - Compare channel performance
+      - Track channel mix over time
+      - Support channel-specific insights
+    required_dimensions:
+      - channel
+    optional_dimensions:
+      - category
+      - time_period
+      - brand
+    parameters:
+      - name: category
+        type: string
+        description: Optional category filter
+        required: false
+      - name: time_period
+        type: string
+        description: Optional time period filter
+        required: false
+      - name: brand
+        type: string
+        description: Optional brand filter
+        required: false
+    output_schema:
+      format: json
+      description: Returns channel analysis metrics
+      fields:
+        - name: channel
+          type: string
+          description: Channel name (online/in-store/mobile)
+        - name: total_spend
+          type: number
+          description: Total spend via channel
+        - name: spend_pct
+          type: number
+          description: Percentage of total spend
+        - name: transaction_count
+          type: integer
+          description: Number of transactions
+        - name: avg_transaction
+          type: number
+          description: Average transaction amount
+    example_queries:
+      - "How has online vs in-store spending changed?"
+      - "Show me mobile commerce trends by category"
+      - "What channels drive most retail transactions?"
+    aliases:
+      - channel
+      - channel_performance
+      - purchase_channel
+      - channel_mix
+    version: "1.0.0"

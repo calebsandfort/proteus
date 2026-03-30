@@ -1,0 +1,50 @@
+tools:
+  - id: cross_shopping_overlap
+    name: Cross-Shopping Overlap
+    description: Multi-brand purchasing patterns and customer overlap. Analyzes which brands are frequently purchased together by the same customers.
+    capabilities:
+      - Identify cross-shopping patterns
+      - Calculate brand overlap percentages
+      - Show customer shared between brands
+      - Support competitive positioning
+    required_dimensions:
+      - brands
+    optional_dimensions:
+      - category
+      - time_period
+      - geography
+    parameters:
+      - name: brands
+        type: array
+        description: List of brands to analyze overlap
+        required: true
+      - name: category
+        type: string
+        description: Product category for analysis
+        required: false
+    output_schema:
+      format: json
+      description: Returns cross-shopping overlap metrics
+      fields:
+        - name: brand_pair
+          type: string
+          description: Brand pair (Brand A / Brand B)
+        - name: overlap_pct
+          type: number
+          description: Percentage of Brand A shoppers who also buy Brand B
+        - name: shared_customers
+          type: integer
+          description: Number of shared customers
+        - name: affinity_score
+          type: number
+          description: Cross-shopping affinity score
+    example_queries:
+      - "What brands do Chipotle customers also shop at?"
+      - "Show me cross-shopping between Nike and Adidas buyers"
+      - "Which convenience store brands have the most overlap?"
+    aliases:
+      - overlap
+      - cross_shopping
+      - customer_overlap
+      - brand_overlap
+    version: "1.0.0"

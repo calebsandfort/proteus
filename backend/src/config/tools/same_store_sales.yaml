@@ -1,0 +1,50 @@
+tools:
+  - id: same_store_sales
+    name: Same Store Sales Analysis
+    description: Organic growth metric separating new units from existing store performance. Measures sales changes at locations that were open in both periods.
+    capabilities:
+      - Calculate same-store sales growth
+      - Separate new store vs existing store performance
+      - Identify location-level trends
+      - Support geographic segmentation
+    required_dimensions:
+      - time_period
+    optional_dimensions:
+      - geography
+      - category
+      - brand
+    parameters:
+      - name: time_period
+        type: string
+        description: Time period for analysis (requires two periods for comparison)
+        required: true
+      - name: geography
+        type: string
+        description: Optional geographic filter
+        required: false
+    output_schema:
+      format: json
+      description: Returns same-store sales metrics
+      fields:
+        - name: same_store_sales_pct
+          type: number
+          description: Same-store sales growth percentage
+        - name: new_store_sales_pct
+          type: number
+          description: New store sales contribution
+        - name: total_sales_pct
+          type: number
+          description: Total sales growth percentage
+        - name: location_count
+          type: integer
+          description: Number of locations analyzed
+    example_queries:
+      - "What is the same store sales growth for QSR?"
+      - "Show me same store sales for Starbucks locations"
+      - "How are existing stores performing vs new locations?"
+    aliases:
+      - SSS
+      - identical_store_sales
+      - comparable_store_sales
+      - existing_store_growth
+    version: "1.0.0"

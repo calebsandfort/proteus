@@ -1,0 +1,57 @@
+tools:
+  - id: customer_retention
+    name: Customer Retention Analysis
+    description: Cohort retention and churn analysis. Measures how well brands retain customers over time and identifies churn patterns.
+    capabilities:
+      - Calculate customer retention rates
+      - Analyze cohort performance
+      - Identify churn patterns
+      - Support loyalty analysis
+    required_dimensions:
+      - brand
+    optional_dimensions:
+      - time_period
+      - generation
+      - income_band
+    parameters:
+      - name: brand
+        type: string
+        description: Brand to analyze
+        required: true
+      - name: cohort_period
+        type: string
+        description: Cohort time period (e.g., 'Q1 2024')
+        required: false
+      - name: retention_periods
+        type: integer
+        description: Number of periods to track retention
+        required: false
+    output_schema:
+      format: json
+      description: Returns customer retention metrics
+      fields:
+        - name: cohort
+          type: string
+          description: Cohort time period
+        - name: retention_rate
+          type: number
+          description: Retention rate percentage
+        - name: period
+          type: integer
+          description: Period number
+        - name: customers_retained
+          type: integer
+          description: Number of customers retained
+        - name: customers_initial
+          type: integer
+          description: Initial cohort size
+    example_queries:
+      - "What is McDonald's customer retention rate?"
+      - "Show me retention cohorts for coffee brands"
+      - "How has Starbucks retention changed over time?"
+    aliases:
+      - retention
+      - loyalty
+      - churn
+      - customer_loyalty
+    version: "1.0.0"

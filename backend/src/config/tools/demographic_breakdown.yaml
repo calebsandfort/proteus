@@ -1,0 +1,57 @@
+tools:
+  - id: demographic_breakdown
+    name: Demographic Breakdown
+    description: Spending distribution by generation, income, and age demographics. Shows which demographic segments drive brand and category performance.
+    capabilities:
+      - Break down spending by generation
+      - Show income level distribution
+      - Analyze age-based spending patterns
+      - Support segment-specific insights
+    required_dimensions:
+      - category
+    optional_dimensions:
+      - time_period
+      - geography
+      - brand
+    parameters:
+      - name: category
+        type: string
+        description: Product category for analysis
+        required: true
+      - name: demographic_type
+        type: string
+        description: Type of demographic breakdown (generation/income/age)
+        required: false
+      - name: brand
+        type: string
+        description: Optional brand filter
+        required: false
+    output_schema:
+      format: json
+      description: Returns demographic breakdown metrics
+      fields:
+        - name: segment
+          type: string
+          description: Demographic segment name
+        - name: total_spend
+          type: number
+          description: Total spend for segment
+        - name: spend_pct
+          type: number
+          description: Percentage of total category spend
+        - name: transaction_count
+          type: integer
+          description: Number of transactions
+        - name: avg_transaction
+          type: number
+          description: Average transaction amount
+    example_queries:
+      - "How does Gen Z spend differ across categories?"
+      - "Show me income distribution for luxury brands"
+      - "What age groups drive most fast food purchases?"
+    aliases:
+      - demographics
+      - age_breakdown
+      - generational_analysis
+      - income_distribution
+    version: "1.0.0"

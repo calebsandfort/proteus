@@ -1,0 +1,55 @@
+tools:
+  - id: market_share_trend
+    name: Market Share Trend
+    description: Analyzes market share trends over time for brands within a category. Tracks brand-level market share percentages and compares performance across multiple brands and time periods.
+    capabilities:
+      - Calculate brand-level market share percentages
+      - Track trend direction over specified time periods
+      - Compare performance across multiple brands
+      - Support quarterly and annual aggregation
+    required_dimensions:
+      - category
+      - time_period
+    optional_dimensions:
+      - geography
+      - generation
+      - income_band
+    parameters:
+      - name: category
+        type: string
+        description: Product category to analyze (e.g., 'fast_food', 'grocery')
+        required: true
+      - name: time_period
+        type: string
+        description: Time period for analysis (e.g., 'Q1 2024', '2023', 'last_12_months')
+        required: true
+      - name: brands
+        type: array
+        description: Optional list of specific brands to include
+        required: false
+    output_schema:
+      format: json
+      description: Returns market share trends by brand
+      fields:
+        - name: brand
+          type: string
+          description: Brand name
+        - name: market_share
+          type: number
+          description: Market share percentage
+        - name: trend
+          type: string
+          description: Trend direction (up/down/stable)
+        - name: period
+          type: string
+          description: Time period
+    example_queries:
+      - "What is the market share trend for cereal brands?"
+      - "How has Coca-Cola's market share changed this year?"
+      - "Show me the top 5 beverage brands by market share"
+    aliases:
+      - market_share
+      - share_trend
+      - brand_share
+      - market_share_trends
+    version: "1.0.0"

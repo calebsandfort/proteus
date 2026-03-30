@@ -1,0 +1,57 @@
+tools:
+  - id: yoy_growth_analysis
+    name: Year-over-Year Growth Analysis
+    description: Transaction volume and spend growth year-over-year. Calculates YoY growth rates to identify trending brands and categories.
+    capabilities:
+      - Calculate year-over-year growth rates
+      - Compare multiple time periods
+      - Identify growth leaders and laggards
+      - Segment by brand, category, or geography
+    required_dimensions:
+      - category
+    optional_dimensions:
+      - time_period
+      - geography
+      - brand
+    parameters:
+      - name: category
+        type: string
+        description: Product category to analyze
+        required: true
+      - name: time_period
+        type: string
+        description: Base time period for YoY comparison
+        required: false
+      - name: geography
+        type: string
+        description: Optional geographic filter
+        required: false
+    output_schema:
+      format: json
+      description: Returns YoY growth metrics
+      fields:
+        - name: brand
+          type: string
+          description: Brand name
+        - name: current_period_value
+          type: number
+          description: Current period total spend
+        - name: prior_period_value
+          type: number
+          description: Prior year period total spend
+        - name: yoy_growth_pct
+          type: number
+          description: Year-over-year growth percentage
+        - name: trend
+          type: string
+          description: Growth trend (accelerating/decelerating/stable)
+    example_queries:
+      - "What is the YoY growth for electronics?"
+      - "Which fast food chains are growing fastest?"
+      - "Show me the YoY revenue growth for automotive brands"
+    aliases:
+      - yoy_growth
+      - growth_analysis
+      - year_over_year
+      - growth_rate
+    version: "1.0.0"

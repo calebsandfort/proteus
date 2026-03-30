@@ -1,0 +1,56 @@
+tools:
+  - id: promotional_sensitivity
+    name: Promotional Sensitivity
+    description: Price elasticity and promotional lift analysis. Measures how brands and categories respond to promotions and pricing changes.
+    capabilities:
+      - Calculate promotional lift
+      - Measure price elasticity
+      - Compare promotional effectiveness
+      - Support pricing strategy
+    required_dimensions:
+      - brand
+    optional_dimensions:
+      - category
+      - time_period
+    parameters:
+      - name: brand
+        type: string
+        description: Brand to analyze
+        required: true
+      - name: category
+        type: string
+        description: Product category
+        required: false
+      - name: time_period
+        type: string
+        description: Time period for analysis
+        required: false
+    output_schema:
+      format: json
+      description: Returns promotional sensitivity metrics
+      fields:
+        - name: promo_lift_pct
+          type: number
+          description: Sales lift during promotion
+        - name: price_elasticity
+          type: number
+          description: Price elasticity coefficient
+        - name: promo_frequency
+          type: number
+          description: Promotion frequency percentage
+        - name: baseline_spend
+          type: number
+          description: Non-promoted baseline spend
+        - name: promoted_spend
+          type: number
+          description: Spend during promotion
+    example_queries:
+      - "How sensitive is this brand to promotions?"
+      - "What is the promotional lift for cereal brands?"
+      - "Show me price elasticity across fast food chains"
+    aliases:
+      - promo_sensitivity
+      - price_elasticity
+      - promotional_lift
+      - promo_analysis
+    version: "1.0.0"

@@ -1,0 +1,59 @@
+tools:
+  - id: top_n_rankings
+    name: Top N Rankings
+    description: Brand rankings by various metrics. Shows top-performing brands by spend, transactions, growth, or other metrics.
+    capabilities:
+      - Rank brands by total spend
+      - Rank by transaction volume
+      - Rank by growth rate
+      - Support custom ranking criteria
+    required_dimensions:
+      - category
+    optional_dimensions:
+      - time_period
+      - geography
+      - ranking_metric
+    parameters:
+      - name: category
+        type: string
+        description: Product category
+        required: true
+      - name: n
+        type: integer
+        description: Number of top brands to return
+        required: false
+        default: 10
+      - name: ranking_metric
+        type: string
+        description: Metric to rank by (spend/transactions/growth)
+        required: false
+        default: spend
+    output_schema:
+      format: json
+      description: Returns top N brand rankings
+      fields:
+        - name: rank
+          type: integer
+          description: Ranking position
+        - name: brand
+          type: string
+          description: Brand name
+        - name: metric_value
+          type: number
+          description: Value of ranking metric
+        - name: market_share
+          type: number
+          description: Market share percentage
+        - name: vs_prior_period
+          type: number
+          description: Change vs prior period
+    example_queries:
+      - "What are the top 10 fast food brands by sales?"
+      - "Show me top 20 brands by transaction volume"
+      - "Which brands have the highest growth rates?"
+    aliases:
+      - rankings
+      - top_brands
+      - leaderboard
+      - brand_rankings
+    version: "1.0.0"
