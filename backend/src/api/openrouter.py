@@ -1,25 +1,36 @@
-"""FR-2.3: OpenRouter Embeddings Client.
+"""OpenRouter client for routing all LLM calls through OpenRouter.
 
-This module provides the OpenRouterClient for the Tool Registry & RAG Retrieval system.
+FR-8.1: All LLM calls SHALL route through OpenRouter. No direct provider API integrations.
+FR-8.5: Provider Normalization - parse failures trigger retry once with same model.
+FR-8.6: LLM Failure Handling - exponential backoff with jitter (max 3 retries),
+        user-friendly error with request ID after exhaustion.
+FR-2.3: OpenRouter Embeddings Client for RAG retrieval.
 
-FR Requirements:
-- The system SHALL use OpenAI's text-embedding-3-small via OpenRouter for embeddings
-- The system SHALL retrieve top-8 candidate tools based on semantic similarity
-- The RAG retrieval similarity threshold SHALL be 0.70
+This module provides:
+- OpenRouterClient: Main client for making LLM requests via OpenRouter
+- UserFriendlyError: Exception with code, message, and request_id for user feedback
 
 Interface Contract:
     class OpenRouterClient:
         def embed_texts(self, texts: List[str], model: str = "openai/text-embedding-3-small") -> List[np.ndarray]
+        async def call_with_retry(self, model: str, messages: List[Dict[str, Any]], ...) -> Dict[str, Any]
 """
 
+import asyncio
+import json
 import os
-from typing import List
+import random
+import uuid
+from typing import Any, Dict, List
 
 import httpx
 import numpy as np
 
+from src.api.normalizers import NormalizerRegistry
+from src.config import settings
 
-# Constants
+
+# Constants for RAG retrieval (FR-2.3)
 SIMILARITY_THRESHOLD: float = 0.70
 """RAG retrieval similarity threshold - tools below this score are filtered out."""
 
@@ -33,117 +44,182 @@ OPENROUTER_API_URL: str = "https://openrouter.ai/api/v1/embeddings"
 """OpenRouter API endpoint for embeddings."""
 
 
-class OpenRouterClient:
-    """Client for OpenRouter embeddings API.
+class UserFriendlyError(Exception):
+    """User-friendly error with code, message, and request_id.
 
-    Uses OpenAI's text-embedding-3-small model via OpenRouter for generating
-    text embeddings for semantic similarity calculations in the RAG retrieval system.
+    Used for presenting errors to users after retries have been exhausted.
+    FR-8.6: Error messages must not leak sensitive data but should include
+    a request ID for debugging.
 
     Attributes:
-        api_key: OpenRouter API key for authentication.
-        model: Default embedding model to use.
+        code: Short error code for programmatic handling (e.g., "PARSE_FAILURE").
+        message: User-friendly error message.
+        request_id: Unique identifier for the failed request.
     """
 
-    def __init__(
-        self,
-        api_key: str | None = None,
-        model: str = DEFAULT_MODEL
-    ) -> None:
-        """Initialize the OpenRouterClient.
+    def __init__(self, code: str, message: str, request_id: str) -> None:
+        self.code = code
+        self.message = message
+        self.request_id = request_id
+        super().__init__(f"[{request_id}] {code}: {message}")
+
+
+class OpenRouterClient:
+    """Client for routing LLM calls through OpenRouter.
+
+    All LLM calls in the system route through OpenRouter to provide
+    provider-agnostic access to multiple LLM providers.
+
+    Attributes:
+        MAX_RETRIES: Maximum number of retry attempts (default: 3).
+        RETRY_DELAY_BASE: Base delay for exponential backoff in seconds (default: 1.0).
+        api_key: OpenRouter API key.
+    """
+
+    MAX_RETRIES = 3
+    RETRY_DELAY_BASE = 1.0
+
+    def __init__(self, api_key: str | None = None) -> None:
+        """Initialize OpenRouter client.
 
         Args:
-            api_key: OpenRouter API key. If not provided, reads from OPENROUTER_API_KEY env var.
-            model: Default embedding model. Defaults to openai/text-embedding-3-small.
+            api_key: OpenRouter API key. If not provided, reads from settings.
 
         Raises:
-            ValueError: If api_key is not provided and OPENROUTER_API_KEY is not set.
+            ValueError: If no API key is available.
         """
-        if api_key is None:
-            api_key = os.environ.get("OPENROUTER_API_KEY")
+        self.api_key = api_key or settings.openai_api_key
+        if not self.api_key:
+            raise ValueError("OPENAI_API_KEY is required for OpenRouter client")
 
-        if not api_key:
-            raise ValueError("OPENROUTER_API_KEY environment variable is required")
+    def _get_provider(self, model: str) -> str:
+        """Extract provider name from model string.
 
-        self.api_key = api_key
-        self.model = model
-        self._client: httpx.Client | None = None
-
-    def _get_client(self) -> httpx.Client:
-        """Get or create the HTTP client.
+        Args:
+            model: Model string in format 'provider/model-name' (e.g., 'openai/gpt-4o').
 
         Returns:
-            Configured httpx Client instance.
+            Provider name (e.g., 'openai', 'google', 'anthropic').
         """
-        if self._client is None:
-            self._client = httpx.Client(
-                headers={
-                    "Authorization": f"Bearer {self.api_key}",
-                    "Content-Type": "application/json",
-                },
-                timeout=30.0,
-            )
-        return self._client
+        return model.split("/")[0]
 
-    def embed_texts(
+    async def _make_request(
         self,
-        texts: List[str],
-        model: str | None = None
-    ) -> List[np.ndarray]:
+        model: str,
+        messages: List[Dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+    ) -> Any:
+        """Make a request to the OpenRouter API.
+
+        Args:
+            model: Model identifier (e.g., 'openai/gpt-4o').
+            messages: List of message dictionaries with 'role' and 'content'.
+            temperature: Sampling temperature (0.0 to 1.0).
+            max_tokens: Maximum tokens to generate.
+
+        Returns:
+            Raw response from OpenRouter API.
+        """
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+
+        async with httpx.AsyncClient(base_url="https://openrouter.ai/api/v1") as client:
+            response = await client.post("/chat/completions", headers=headers, json=payload)
+            response.raise_for_status()
+            return response.json()
+
+    async def call_with_retry(
+        self,
+        model: str,
+        messages: List[Dict[str, Any]],
+        temperature: float = 0.0,
+        max_tokens: int = 2048,
+    ) -> Dict[str, Any]:
+        """Make an LLM call with automatic retries on parse failure.
+
+        FR-8.5: Parse failures trigger retry once with same model.
+        FR-8.6: Exponential backoff with jitter (max 3 retries).
+
+        Args:
+            model: Model identifier (e.g., 'openai/gpt-4o').
+            messages: List of message dictionaries.
+            temperature: Sampling temperature (default: 0.0).
+            max_tokens: Maximum tokens to generate (default: 2048).
+
+        Returns:
+            Dictionary containing parsed function calls.
+
+        Raises:
+            UserFriendlyError: After exhausting all retries with request_id for tracking.
+        """
+        provider = self._get_provider(model)
+        normalizer = NormalizerRegistry.get_normalizer(provider)
+        self._request_id = str(uuid.uuid4())[:8]
+
+        for attempt in range(self.MAX_RETRIES):
+            try:
+                response = await self._make_request(
+                    model, messages, temperature, max_tokens
+                )
+                return normalizer.parse_function_calls(response)
+            except (json.JSONDecodeError, ValueError, KeyError) as parse_error:
+                if attempt == self.MAX_RETRIES - 1:
+                    raise UserFriendlyError(
+                        code="PARSE_FAILURE",
+                        message="Unable to process model response. Please try again.",
+                        request_id=self._request_id,
+                    )
+                # Exponential backoff with jitter
+                delay = self.RETRY_DELAY_BASE * (2**attempt) + random.random()
+                await asyncio.sleep(delay)
+
+        # Should not reach here, but safety return
+        raise UserFriendlyError(
+            code="UNEXPECTED_ERROR",
+            message="An unexpected error occurred.",
+            request_id=self._request_id,
+        )
+
+    async def embed_texts(
+        self, texts: List[str], model: str = "openai/text-embedding-3-small"
+    ) -> List[Any]:
         """Generate embeddings for a list of texts.
+
+        FR-8.1: All LLM calls route through OpenRouter.
 
         Args:
             texts: List of text strings to embed.
-            model: Model to use for embedding. If not provided, uses the client's default model.
+            model: Embedding model identifier (default: 'openai/text-embedding-3-small').
 
         Returns:
-            List of numpy arrays, each containing the embedding vector for the corresponding text.
-
-        Raises:
-            Exception: If the API request fails or returns an error.
+            List of embedding vectors (numpy arrays or lists).
         """
-        if not texts:
-            return []
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
 
-        if model is None:
-            model = self.model
+        payload = {
+            "model": model,
+            "input": texts,
+        }
 
-        client = self._get_client()
-
-        response = client.post(
-            url=OPENROUTER_API_URL,
-            json={
-                "model": model,
-                "input": texts,
-            }
-        )
-
-        if response.status_code != 200:
-            raise Exception(
-                f"OpenRouter API error: {response.status_code} - {response.text}"
+        async with httpx.AsyncClient(base_url="https://openrouter.ai/api/v1") as client:
+            response = await client.post(
+                "/embeddings", headers=headers, json=payload
             )
+            response.raise_for_status()
+            result = response.json()
 
-        try:
-            data = response.json()
-        except ValueError as e:
-            raise Exception(f"Invalid JSON response from OpenRouter: {e}")
-
-        embeddings = []
-        for item in data.get("data", []):
-            embedding_vector = item.get("embedding", [])
-            embeddings.append(np.array(embedding_vector, dtype=np.float32))
-
-        return embeddings
-
-    def close(self) -> None:
-        """Close the HTTP client."""
-        if self._client is not None:
-            self._client.close()
-            self._client = None
-
-    def __enter__(self) -> "OpenRouterClient":
-        """Context manager entry."""
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        """Context manager exit."""
-        self.close()
+            # Extract embeddings from response
+            return [item["embedding"] for item in result["data"]]
