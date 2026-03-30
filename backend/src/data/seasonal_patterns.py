@@ -317,17 +317,16 @@ def apply_seasonal_adjustment(
         noise = np.random.uniform(0, bts_range)
         multiplier = BACK_TO_SCHOOL_MIN + noise
 
-    # Weekend vs Weekday (for retail categories)
-    elif category == RETAIL:
-        if weekday == 5:  # Saturday
-            sat_range = WEEKEND_SAT_MAX - WEEKEND_SAT_MIN
-            noise = np.random.uniform(0, sat_range)
-            multiplier = WEEKEND_SAT_MIN + noise
-        elif weekday == 6:  # Sunday
-            # Sunday has elevated spending but less than Saturday
-            # Sunday multiplier: ~1.20 +/- 5%
-            noise = np.random.uniform(-0.05, 0.05)
-            multiplier = WEEKEND_SUN_MIN + noise
+    # Weekend vs Weekday (all categories, but not overriding Q4/Jan/BtS periods)
+    elif weekday == 5:  # Saturday
+        sat_range = WEEKEND_SAT_MAX - WEEKEND_SAT_MIN
+        noise = np.random.uniform(0, sat_range)
+        multiplier = WEEKEND_SAT_MIN + noise
+    elif weekday == 6:  # Sunday
+        # Sunday has elevated spending but less than Saturday
+        # Sunday multiplier: ~1.20 +/- 5%
+        noise = np.random.uniform(-0.05, 0.05)
+        multiplier = WEEKEND_SUN_MIN + noise
 
     # For other cases (non-special periods/categories), multiplier stays 1.0
     # with small random variation for realism
@@ -416,9 +415,10 @@ def get_income_brand_preference(
     pref_range = INCOME_BRAND_PREFERENCES[income_band][brand_tier]
     min_pref, max_pref = pref_range
 
-    # Sample from the range with slight clustering toward center
-    # Using beta distribution-like approach for realistic clustering
-    raw_value = np.random.beta(2, 2)  # Clusters around 0.5
+    # Sample from the range with skew toward lower end of range.
+    # beta(1,3) clusters near min, creating steeper tier differentiation
+    # and higher Gini (more brand concentration).
+    raw_value = np.random.beta(1, 3)
     preference = min_pref + raw_value * (max_pref - min_pref)
 
     return float(preference)

@@ -70,45 +70,97 @@ CATEGORY_SEED = [
 
 # Brands: tier must match CATEGORY_PARAMS keys in distributions.py
 # category_name maps each brand to one of the category level1 values above
+# Expanded to ~66 brands (2.3x original 29) for more realistic brand concentration
 BRAND_SEED = [
-    # retail
+    # retail (13 brands)
     {"name": "Walmart",          "tier": "essential", "archetype": "mass_market",   "category_name": "retail"},
     {"name": "Target",           "tier": "mid_tier",  "archetype": "mass_market",   "category_name": "retail"},
     {"name": "Dollar Tree",      "tier": "value",     "archetype": "discount",      "category_name": "retail"},
     {"name": "Dollar General",   "tier": "value",     "archetype": "discount",      "category_name": "retail"},
     {"name": "Costco",           "tier": "mid_tier",  "archetype": "warehouse",     "category_name": "retail"},
-    # grocery
+    {"name": "Sam's Club",       "tier": "mid_tier",  "archetype": "warehouse",     "category_name": "retail"},
+    {"name": "BJ's Wholesale",    "tier": "mid_tier",  "archetype": "warehouse",     "category_name": "retail"},
+    {"name": "Five Below",       "tier": "value",     "archetype": "discount",      "category_name": "retail"},
+    {"name": "Marshalls",        "tier": "value",     "archetype": "off_price",     "category_name": "retail"},
+    {"name": "T.J. Maxx",        "tier": "value",     "archetype": "off_price",     "category_name": "retail"},
+    {"name": "Burlington",        "tier": "value",     "archetype": "off_price",     "category_name": "retail"},
+    {"name": "IKEA",             "tier": "mid_tier",  "archetype": "specialty",     "category_name": "retail"},
+    {"name": "Kohl's",           "tier": "mid_tier",  "archetype": "department",    "category_name": "retail"},
+
+    # grocery (10 brands)
     {"name": "Kroger",           "tier": "essential", "archetype": "supermarket",   "category_name": "grocery"},
     {"name": "Safeway",          "tier": "essential", "archetype": "supermarket",   "category_name": "grocery"},
     {"name": "Whole Foods",      "tier": "premium",   "archetype": "natural_foods", "category_name": "grocery"},
     {"name": "Trader Joe's",     "tier": "mid_tier",  "archetype": "specialty",     "category_name": "grocery"},
-    # dining
+    {"name": "Aldi",            "tier": "value",     "archetype": "discount",      "category_name": "grocery"},
+    {"name": "Publix",          "tier": "mid_tier",  "archetype": "supermarket",   "category_name": "grocery"},
+    {"name": "Wegmans",          "tier": "premium",   "archetype": "supermarket",   "category_name": "grocery"},
+    {"name": "Sprouts",          "tier": "mid_tier",  "archetype": "natural_foods", "category_name": "grocery"},
+    {"name": "Hy-Vee",           "tier": "mid_tier",  "archetype": "supermarket",   "category_name": "grocery"},
+    {"name": "Giant Food",       "tier": "essential", "archetype": "supermarket",   "category_name": "grocery"},
+
+    # dining / fast food (17 brands)
     {"name": "Olive Garden",     "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
     {"name": "Cheesecake Factory","tier": "dining",   "archetype": "casual_dining", "category_name": "dining"},
     {"name": "Texas Roadhouse",  "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
-    # fast food
+    {"name": "Applebee's",       "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
+    {"name": "Chili's",          "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
+    {"name": "Outback Steakhouse","tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
+    {"name": "Red Lobster",      "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
+    {"name": "Buffalo Wild Wings","tier": "dining",   "archetype": "casual_dining", "category_name": "dining"},
+    {"name": "Cracker Barrel",   "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
+    {"name": "Denny's",          "tier": "dining",    "archetype": "casual_dining", "category_name": "dining"},
     {"name": "McDonald's",       "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
     {"name": "Starbucks",        "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
     {"name": "Chick-fil-A",      "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
     {"name": "Chipotle",         "tier": "fast_food", "archetype": "fast_casual",   "category_name": "dining"},
-    # apparel
+    {"name": "Raising Cane's",   "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
+    {"name": "Popeyes",           "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
+    {"name": "Whataburger",      "tier": "fast_food", "archetype": "qsr",           "category_name": "dining"},
+
+    # apparel (13 brands)
     {"name": "Gap",              "tier": "mid_tier",  "archetype": "specialty",     "category_name": "apparel"},
     {"name": "H&M",              "tier": "value",     "archetype": "fast_fashion",  "category_name": "apparel"},
     {"name": "Nordstrom",        "tier": "premium",   "archetype": "department",    "category_name": "apparel"},
     {"name": "Neiman Marcus",    "tier": "luxury",    "archetype": "luxury_dept",   "category_name": "apparel"},
     {"name": "Louis Vuitton",    "tier": "luxury",    "archetype": "luxury_brand",  "category_name": "apparel"},
-    # healthcare
+    {"name": "Zara",             "tier": "mid_tier",  "archetype": "fast_fashion",  "category_name": "apparel"},
+    {"name": "Old Navy",         "tier": "value",     "archetype": "fast_fashion",  "category_name": "apparel"},
+    {"name": "ASOS",             "tier": "mid_tier",  "archetype": "online",         "category_name": "apparel"},
+    {"name": "Ross",             "tier": "value",     "archetype": "off_price",     "category_name": "apparel"},
+    {"name": "Lululemon",        "tier": "premium",   "archetype": "athletic",      "category_name": "apparel"},
+    {"name": "REI",              "tier": "premium",   "archetype": "athletic",      "category_name": "apparel"},
+    {"name": "American Eagle",   "tier": "mid_tier",  "archetype": "specialty",     "category_name": "apparel"},
+    {"name": "Foot Locker",      "tier": "mid_tier",  "archetype": "specialty",     "category_name": "apparel"},
+
+    # healthcare (5 brands)
     {"name": "CVS",              "tier": "essential", "archetype": "pharmacy",      "category_name": "healthcare"},
     {"name": "Walgreens",        "tier": "essential", "archetype": "pharmacy",      "category_name": "healthcare"},
-    # travel
+    {"name": "MinuteClinic",     "tier": "essential", "archetype": "clinic",        "category_name": "healthcare"},
+    {"name": "Concentra",        "tier": "essential", "archetype": "clinic",        "category_name": "healthcare"},
+    {"name": "HealthMart",       "tier": "value",     "archetype": "pharmacy",      "category_name": "healthcare"},
+
+    # travel (6 brands)
     {"name": "Marriott",         "tier": "premium",   "archetype": "hotel_chain",   "category_name": "travel"},
     {"name": "Hilton",           "tier": "mid_tier",  "archetype": "hotel_chain",   "category_name": "travel"},
-    # home improvement
+    {"name": "Hyatt",            "tier": "premium",   "archetype": "hotel_chain",   "category_name": "travel"},
+    {"name": "Choice Hotels",    "tier": "value",     "archetype": "hotel_chain",   "category_name": "travel"},
+    {"name": "Motel 6",          "tier": "value",     "archetype": "budget_hotel",  "category_name": "travel"},
+    {"name": "Airbnb",           "tier": "mid_tier",  "archetype": "vacation_rental","category_name": "travel"},
+
+    # home improvement (5 brands)
     {"name": "Home Depot",       "tier": "mid_tier",  "archetype": "home_improvement", "category_name": "home_improvement"},
     {"name": "Lowe's",           "tier": "mid_tier",  "archetype": "home_improvement", "category_name": "home_improvement"},
-    # school / electronics
+    {"name": "Ace Hardware",      "tier": "value",     "archetype": "hardware",      "category_name": "home_improvement"},
+    {"name": "True Value",        "tier": "value",     "archetype": "hardware",      "category_name": "home_improvement"},
+    {"name": "Harbor Freight",   "tier": "value",     "archetype": "discount_tool", "category_name": "home_improvement"},
+
+    # school / office (5 brands)
     {"name": "Staples",          "tier": "mid_tier",  "archetype": "office_supply", "category_name": "school"},
     {"name": "Best Buy",         "tier": "mid_tier",  "archetype": "electronics",   "category_name": "school"},
+    {"name": "Office Depot",     "tier": "mid_tier",  "archetype": "office_supply", "category_name": "school"},
+    {"name": "GameStop",         "tier": "mid_tier",  "archetype": "electronics",   "category_name": "school"},
+    {"name": "Amazon Books",     "tier": "mid_tier",  "archetype": "online",         "category_name": "school"},
 ]
 
 

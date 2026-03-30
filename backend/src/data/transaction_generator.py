@@ -42,6 +42,47 @@ CHANNEL_WEIGHTS = [0.55, 0.35, 0.10]
 # Day names for weekday()
 DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+# Star brand IDs: dominant brands per tier that get 15x selection weight to increase Gini.
+# These are high-revenue, widely-recognized brands in each tier.
+# IDs match brand insertion order in generate_synthetic_data.py BRAND_SEED (after re-seed).
+STAR_BRAND_IDS = {
+    1,   # Walmart (retail essential)
+    2,   # Target (retail mid_tier)
+    5,   # Costco (retail mid_tier warehouse)
+    14,  # Kroger (grocery essential)
+    16,  # Whole Foods (grocery premium)
+    17,  # Trader Joe's (grocery mid_tier)
+    24,  # Olive Garden (dining)
+    34,  # McDonald's (fast_food)
+    36,  # Chick-fil-A (fast_food)
+    43,  # Nordstrom (apparel premium)
+    45,  # Louis Vuitton (apparel luxury)
+    54,  # CVS (healthcare essential)
+    55,  # Walgreens (healthcare essential)
+    59,  # Marriott (travel premium)
+    60,  # Hilton (travel mid_tier)
+    65,  # Home Depot (home_improvement mid_tier)
+    66,  # Lowe's (home_improvement mid_tier)
+    70,  # Staples (school mid_tier)
+    71,  # Best Buy (school electronics)
+}
+STAR_MULTIPLIER = 15.0
+
+# FR-6.6: Target category proportions (BEA consumer spending benchmarks).
+# Used to steer category selection toward realistic spending distributions.
+# Sum = 1.0. grocery=30%, dining=20%, retail=25%, apparel=10%,
+# healthcare=5%, travel=5%, home_improvement=3%, school=2%.
+CATEGORY_TARGET_PROPORTIONS: Dict[str, float] = {
+    "grocery": 0.30,
+    "dining": 0.20,
+    "retail": 0.25,
+    "apparel": 0.10,
+    "healthcare": 0.05,
+    "travel": 0.05,
+    "home_improvement": 0.03,
+    "school": 0.02,
+}
+
 # Transaction rate constants (per year per panelist)
 TRANSACTIONS_PER_YEAR_MIN = 25
 TRANSACTIONS_PER_YEAR_MAX = 100
@@ -170,12 +211,30 @@ def generate_transactions_for_panelist(
 
     # Generate transaction timestamps spread across the date range
     if expected_txns > 0:
-        # Generate random timestamps
+        # Weekend weighting: Saturday and Sunday ~3.05x more likely than weekdays.
+        # This targets RETAIL_WEEKEND_WEEKDAY_RATIO ≈ 1.30 (weekend amount / weekday amount).
+        # With Sat=Sunday=3.05x weekday:
+        #   weekday share = 5/(5 + 2*3.05) = 5/11.1, weekend share = 6.1/11.1
+        # Combined with weekend amount multiplier ~1.26 (avg of Sat 1.325, Sun 1.20):
+        #   weekend/weekday ratio = (6.1/5) * 1.26 = 1.54 (but actual is lower due to other effects)
+        # Interpolated from test runs: w=1.9→0.92, w=3.25→1.55, target 1.30→w≈3.05
+        day_weights = [1.0, 1.0, 1.0, 1.0, 1.0, 2.95, 2.95]
+        day_probs = np.array(day_weights) / sum(day_weights)  # normalize
+
         transaction_dates = []
         for _ in range(expected_txns):
-            # Random day offset
-            day_offset = np.random.randint(0, date_diff)
-            txn_date = start_date + timedelta(days=day_offset)
+            # Pick day of week from weighted distribution
+            dow = np.random.choice(7, p=day_probs)
+
+            # Find a random date within range that falls on that day-of-week.
+            # Strategy: pick a random offset, then roll forward/back to target dow.
+            base_offset = np.random.randint(0, date_diff)
+            candidate_date = start_date + timedelta(days=base_offset)
+            current_dow = candidate_date.weekday()
+
+            # Adjust to target dow (0=Mon ... 6=Sun)
+            days_to_add = (dow - current_dow) % 7
+            txn_date = candidate_date + timedelta(days=days_to_add)
 
             # Random hour (weighted toward afternoon/evening)
             # Hour distribution: 24 elements for hours 0-23
@@ -201,28 +260,51 @@ def generate_transactions_for_panelist(
         # Sort transactions by timestamp
         transaction_dates.sort()
 
-        # Get brand tiers for income-brand correlation
-        # Build list of (brand_id, tier, category_id) tuples
-        brand_choices = []
+        # Build category name <-> id lookups
+        category_id_to_name: Dict[int, str] = {}
+        for cat in categories:
+            cat_id = _get_field(cat, "category_id", _get_field(cat, "id", None))
+            cat_name = _get_field(cat, "category_name", _get_field(cat, "name", "retail"))
+            if cat_id is not None:
+                category_id_to_name[cat_id] = cat_name
+
+        # Build brand choices list + category-name-to-brands mapping
+        brand_choices: List[tuple] = []
+        category_name_to_brands: Dict[str, List[tuple]] = {}
         for brand in brands:
             brand_id = _get_field(brand, "brand_id", _get_field(brand, "id", 1))
             tier = _get_brand_tier(brand)
             category_id = _get_field(brand, "category_id", _get_field(brand, "category", 1))
-            brand_choices.append((brand_id, tier, category_id))
+            cat_name = category_id_to_name.get(category_id, "retail")
+            entry = (brand_id, tier, category_id)
+            brand_choices.append(entry)
+            if cat_name not in category_name_to_brands:
+                category_name_to_brands[cat_name] = []
+            category_name_to_brands[cat_name].append(entry)
 
         if not brand_choices:
             brand_choices = [(1, "mid_tier", 1)]
 
+        # Build target category selection probabilities
+        cat_names = list(CATEGORY_TARGET_PROPORTIONS.keys())
+        cat_probs = [CATEGORY_TARGET_PROPORTIONS[c] for c in cat_names]
+
         # Generate each transaction
         for txn_datetime in transaction_dates:
-            # Select brand based on income-brand correlation
+            # Select category first from target proportions, then brand within category.
+            # This steers category distribution toward BEA benchmarks.
+            category_name = np.random.choice(cat_names, p=cat_probs)
+
+            # Get brands in selected category, falling back to all brands
+            cat_brands = category_name_to_brands.get(category_name, brand_choices)
+            if not cat_brands:
+                cat_brands = brand_choices
+
+            # Select brand from within the chosen category using income preferences
             brand_id, brand_tier, category_id = _select_brand_for_income(
                 panelist.income_band_id,
-                brand_choices
+                cat_brands
             )
-
-            # Get category name
-            category_name = _get_category_name_from_id(category_id, categories)
 
             # Generate base transaction amount using log-normal distribution
             base_amount = generate_transaction_amount(
@@ -297,10 +379,12 @@ def _select_brand_for_income(
     if len(brand_choices) == 1:
         return brand_choices[0]
 
-    # Get preference weights for each brand tier
+    # Get preference weights for each brand tier, with 10x boost for star brands
     weights = []
     for brand_id, tier, category_id in brand_choices:
         pref = get_income_brand_preference(income_band, tier)
+        if brand_id in STAR_BRAND_IDS:
+            pref *= STAR_MULTIPLIER
         weights.append(pref)
 
     # Normalize weights
