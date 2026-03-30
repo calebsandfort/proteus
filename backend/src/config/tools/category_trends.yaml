@@ -1,0 +1,57 @@
+tools:
+  - id: category_trends
+    name: Category Trends
+    description: Category-level transaction counts and dollar volumes. Tracks overall category performance and identifies seasonal patterns.
+    capabilities:
+      - Show category-level transaction volumes
+      - Track dollar volumes over time
+      - Identify seasonal patterns
+      - Compare category growth rates
+    required_dimensions:
+      - category
+    optional_dimensions:
+      - time_period
+      - geography
+      - channel
+    parameters:
+      - name: category
+        type: string
+        description: Product category to analyze
+        required: true
+      - name: time_period
+        type: string
+        description: Time period for analysis
+        required: false
+      - name: aggregation
+        type: string
+        description: Aggregation level (daily/weekly/monthly/quarterly)
+        required: false
+    output_schema:
+      format: json
+      description: Returns category trend data
+      fields:
+        - name: period
+          type: string
+          description: Time period
+        - name: total_spend
+          type: number
+          description: Total transaction spend
+        - name: transaction_count
+          type: integer
+          description: Number of transactions
+        - name: avg_transaction
+          type: number
+          description: Average transaction amount
+        - name: growth_vs_prior
+          type: number
+          description: Growth vs prior period percentage
+    example_queries:
+      - "What are the spending trends for grocery?"
+      - "Show me restaurant category trends"
+      - "How has the apparel category performed this year?"
+    aliases:
+      - category_trend
+      - category_analysis
+      - category_performance
+      - spending_trends
+    version: "1.0.0"

@@ -1,0 +1,57 @@
+tools:
+  - id: geographic_breakdown
+    name: Geographic Breakdown
+    description: State, CBSA, and regional spending patterns. Identifies which geographies drive brand and category performance.
+    capabilities:
+      - Break down spending by state
+      - Analyze CBSA-level patterns
+      - Show regional trends
+      - Compare urban vs suburban performance
+    required_dimensions:
+      - geography
+    optional_dimensions:
+      - category
+      - time_period
+      - brand
+    parameters:
+      - name: geography_type
+        type: string
+        description: Type of geography (state/cbsa/region)
+        required: false
+      - name: category
+        type: string
+        description: Optional category filter
+        required: false
+      - name: time_period
+        type: string
+        description: Optional time period filter
+        required: false
+    output_schema:
+      format: json
+      description: Returns geographic breakdown metrics
+      fields:
+        - name: geography
+          type: string
+          description: Geographic region name
+        - name: total_spend
+          type: number
+          description: Total spend in region
+        - name: spend_pct
+          type: number
+          description: Percentage of total spend
+        - name: transaction_count
+          type: integer
+          description: Number of transactions
+        - name: avg_transaction
+          type: number
+          description: Average transaction amount
+    example_queries:
+      - "What states have the highest fast food spending?"
+      - "Show me geographic breakdown for athletic brands"
+      - "How does urban vs suburban spending compare?"
+    aliases:
+      - geography
+      - region_breakdown
+      - state_analysis
+      - market_by_region
+    version: "1.0.0"

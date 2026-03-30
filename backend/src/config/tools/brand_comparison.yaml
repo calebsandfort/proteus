@@ -1,0 +1,57 @@
+tools:
+  - id: brand_comparison
+    name: Brand Comparison
+    description: Direct Brand X vs. Brand Y analysis for competitive positioning. Compares transaction volumes, spend, and growth rates between two or more brands.
+    capabilities:
+      - Compare two or more brands side-by-side
+      - Show relative performance metrics
+      - Identify competitive advantages
+      - Support multi-brand comparison
+    required_dimensions:
+      - brands
+      - category
+    optional_dimensions:
+      - time_period
+      - geography
+    parameters:
+      - name: brands
+        type: array
+        description: List of brand names to compare (2-5 brands recommended)
+        required: true
+      - name: category
+        type: string
+        description: Product category for comparison
+        required: true
+      - name: time_period
+        type: string
+        description: Time period for comparison
+        required: false
+    output_schema:
+      format: json
+      description: Returns brand comparison metrics
+      fields:
+        - name: brand
+          type: string
+          description: Brand name
+        - name: total_spend
+          type: number
+          description: Total transaction spend
+        - name: transaction_count
+          type: integer
+          description: Number of transactions
+        - name: avg_transaction
+          type: number
+          description: Average transaction amount
+        - name: market_share
+          type: number
+          description: Market share percentage
+    example_queries:
+      - "Compare Nike and Adidas sales in athletic footwear"
+      - "How do Starbucks and Dunkin compare on customer spending?"
+      - "Show me Chipotle vs Taco Bell revenue trends"
+    aliases:
+      - compare_brands
+      - brand_vs
+      - competitive_analysis
+      - brand_versus
+    version: "1.0.0"

@@ -1,0 +1,58 @@
+tools:
+  - id: wallet_share
+    name: Wallet Share Analysis
+    description: Share of customer's total category spend per brand. Measures how much of a consumer's category spending goes to each brand.
+    capabilities:
+      - Calculate brand wallet share percentage
+      - Track wallet share changes over time
+      - Identify wallet share leaders
+      - Support demographic segmentation
+    required_dimensions:
+      - category
+    optional_dimensions:
+      - time_period
+      - generation
+      - income_band
+      - geography
+    parameters:
+      - name: category
+        type: string
+        description: Product category for wallet share analysis
+        required: true
+      - name: brands
+        type: array
+        description: Optional list of brands to include
+        required: false
+      - name: time_period
+        type: string
+        description: Time period for analysis
+        required: false
+    output_schema:
+      format: json
+      description: Returns wallet share metrics
+      fields:
+        - name: brand
+          type: string
+          description: Brand name
+        - name: wallet_share_pct
+          type: number
+          description: Percentage of category spending
+        - name: total_category_spend
+          type: number
+          description: Total category spend
+        - name: brand_spend
+          type: number
+          description: Brand-specific spend
+        - name: rank
+          type: integer
+          description: Wallet share rank
+    example_queries:
+      - "What is Coca-Cola's wallet share in beverages?"
+      - "Show me wallet share for fast food brands"
+      - "How much of grocery spending goes to private label?"
+    aliases:
+      - wallet_allocation
+      - share_of_wallet
+      - wallet_share_pct
+      - spending_share
+    version: "1.0.0"
