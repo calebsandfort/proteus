@@ -7,6 +7,19 @@ from src.api.models.tool import (
     RetrievedTool,
     OutputField,
 )
+from src.api.models.dimensions import (
+    Generation,
+    IncomeBand,
+    GENERATIONS,
+    INCOME_BANDS,
+    DimensionExtractionInput,
+    DimensionExtractionResult,
+    DimensionValidationResult,
+    ExtractedDimensions,
+    DisambiguationOption,
+    DimensionConflict,
+    DimensionExtractionOutput,
+)
 
 __all__ = [
     "ToolDefinition",
@@ -14,4 +27,16 @@ __all__ = [
     "ToolParameter",
     "RetrievedTool",
     "OutputField",
+    # Dimension models
+    "Generation",
+    "IncomeBand",
+    "GENERATIONS",
+    "INCOME_BANDS",
+    "DimensionExtractionInput",
+    "DimensionExtractionResult",
+    "DimensionValidationResult",
+    "ExtractedDimensions",
+    "DisambiguationOption",
+    "DimensionConflict",
+    "DimensionExtractionOutput",
 ]
