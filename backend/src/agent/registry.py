@@ -259,4 +259,4 @@ class ToolRegistry:
 
         # Cosine similarity = dot(a, b) / (norm(a) * norm(b))
         dot_product = np.dot(a_padded, b_padded)
-        return dot_product / (norm_a * norm_b)
+        return float(dot_product / (norm_a * norm_b))
