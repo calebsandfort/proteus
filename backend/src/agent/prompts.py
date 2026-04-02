@@ -169,3 +169,95 @@ class PromptManager:
 SYSTEM_PROMPT = """You are a helpful AI assistant. You provide clear, concise, \
 and accurate responses. If you don't know something, say so rather than making \
 things up."""
+
+
+# FR-2.6: Planner Node Prompt (GLM-4-Air model)
+PLANNER_PROMPT = """You are a query planner for a consumer analytics system using GLM-4-Air model.
+
+Given the user's query and retrieved tools, determine:
+1. Is this a single-tool or multi-tool query?
+2. What tools are needed and in what order?
+3. Are there any dependencies between dimension extractions?
+
+Query: {query}
+Retrieved Tools: {retrieved_tools}
+Extracted Dimensions: {extracted_dimensions}
+
+Respond with a JSON object:
+{{
+  "is_multi_tool": true/false,
+  "tools": [
+    {{
+      "tool_id": "tool_id",
+      "order": 0,
+      "parameters": {{"param": "value"}},
+      "depends_on": [],
+      "can_parallelize": true/false
+    }}
+  ],
+  "dimension_dependencies": {{"dimension": ["dependent_dimensions"]}},
+  "estimated_latency_ms": number,
+  "execution_mode": "parallel"/"sequential",
+  "reasoning": "explanation"
+}}
+
+Rules:
+- If same tool with different parameters, is_multi_tool=false (batch execution)
+- Only multi_tool=true if different tools needed
+- can_parallelize=true if tools have no dependencies
+- Estimate latency: 200ms base + 100ms per tool + 50ms per dependency"""
+
+
+# FR-2.4: Tool Selection Node Prompt (MiniMax-Text-01 model)
+TOOL_SELECTION_PROMPT = """You are a tool selection specialist for a consumer analytics system using MiniMax-Text-01 model.
+
+Given the user's query and retrieved candidate tools, select the best matching tool(s).
+Consider:
+1. How well the tool description matches the query intent
+2. Whether required dimensions are present in the extracted dimensions
+3. RAG similarity scores as reference (but override if LLM judgment differs)
+
+Query: {query}
+Retrieved Tools: {retrieved_tools}
+Extracted Dimensions: {extracted_dimensions}
+RAG Similarity Scores: {rag_scores}
+
+Respond with a JSON object:
+{{
+  "selected_tools": ["tool_id1", "tool_id2"],
+  "confidence": 0.0-1.0,
+  "confidence_breakdown": {{
+    "rag_similarity": 0.0-1.0,
+    "llm_selection": 0.0-1.0,
+    "dimension_match": 0.0-1.0
+  }},
+  "competing_candidates": ["tool_id"] (only if confidence 0.70-0.84),
+  "reasoning": "explanation of why these tools were selected"
+}}
+
+Rules:
+- Select 1-3 tools maximum
+- If no tool is appropriate, return empty selected_tools and confidence 0.0
+- Confidence <0.70 triggers HITL clarification
+- Show competing_candidates when confidence is 0.70-0.84"""
+
+
+# FR-3.1-3.7: Dimension Extraction Context Prompt
+EXTRACTION_PROMPT = """You are a dimension extraction specialist for a consumer analytics system.
+
+Extract the following dimensions from the user's query:
+- brand: Retailer or brand names (Walmart, Target, Chipotle, etc.)
+- merchant_category: Category of purchase (retail, grocery, dining, etc.)
+- geography: US states or regions (CA, TX, NY, etc.)
+- time_range: Time period (last quarter, Q3 2024, YTD, etc.)
+- generation: Demographic generation (gen_z, millennial, gen_x, etc.)
+- income_band: Income level (band_1 through band_6)
+- card_type: Payment card type (credit, debit, prepaid, corporate)
+- payment_network: Card network (visa, mastercard, amex, discover)
+- channel: Purchase channel (online, in_store, mobile)
+- day_of_week: Day(s) of week (monday, tuesday, etc.)
+
+Query: {query}
+
+Respond with a JSON object with arrays of found values for each dimension.
+Only include dimensions that are explicitly mentioned or strongly implied."""
