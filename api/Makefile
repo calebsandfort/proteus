@@ -8,9 +8,9 @@ test:
 test-verbose:
 	dotnet test --logger "console;verbosity=detailed"
 
-# Run tests with coverage
+# Run tests with coverage using dotnet-coverage (required for .NET 10+)
 test-cov:
-	dotnet test --collect:"XPlat Code Coverage"
+	rm -rf TestResults && dotnet-coverage collect 'dotnet test' -o './TestResults/coverage.cobertura.xml' -f cobertura
 
 # Build the project
 build:

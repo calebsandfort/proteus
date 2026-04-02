@@ -6,7 +6,7 @@ test:
 
 # Run tests with verbose output
 test-verbose:
-	pnpm test -- --reporter=verbose
+	pnpm test --reporter=verbose
 
 # Run tests in watch mode
 test-watch:
@@ -14,7 +14,7 @@ test-watch:
 
 # Run tests with coverage
 test-cov:
-	pnpm test -- --coverage
+	pnpm test --coverage
 
 # Run development server
 dev:
