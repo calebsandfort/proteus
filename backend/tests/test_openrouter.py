@@ -30,16 +30,15 @@ class TestOpenRouterClientInitialization:
 
     def test_openrouter_client_initialization(self) -> None:
         """Client initializes with default values."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
             assert client.api_key == "test-key"
 
     def test_openrouter_client_requires_api_key(self) -> None:
         """Should raise if no API key provided."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = ""
-            with pytest.raises(ValueError, match="OPENAI_API_KEY"):
+        env = {k: v for k, v in __import__("os").environ.items() if k != "OPENROUTER_API_KEY"}
+        with patch.dict("os.environ", env, clear=True):
+            with pytest.raises(ValueError, match="OPENROUTER_API_KEY"):
                 OpenRouterClient()
 
 
@@ -48,22 +47,19 @@ class TestOpenRouterClientGetProvider:
 
     def test_get_provider_extracts_provider_from_model(self) -> None:
         """_get_provider('openai/gpt-4o') returns 'openai'."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
             assert client._get_provider("openai/gpt-4o") == "openai"
 
     def test_get_provider_handles_google_model(self) -> None:
         """_get_provider('google/gemini-2.0-flash') returns 'google'."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
             assert client._get_provider("google/gemini-2.0-flash") == "google"
 
     def test_get_provider_handles_anthropic_model(self) -> None:
         """_get_provider('anthropic/claude-3.5-sonnet') returns 'anthropic'."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
             assert client._get_provider("anthropic/claude-3.5-sonnet") == "anthropic"
 
@@ -71,17 +67,13 @@ class TestOpenRouterClientGetProvider:
 class TestOpenRouterClientEmbedTexts:
     """Test class for embed_texts method."""
 
-    @pytest.mark.asyncio
-    async def test_embed_texts_returns_list(self) -> None:
+    def test_embed_texts_returns_list(self) -> None:
         """embed_texts returns a list (mocked)."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
 
-            # Mock httpx client
             mock_response = MagicMock()
             mock_response.status_code = 200
-            # httpx Response.json() is synchronous - set return_value directly
             mock_response.json.return_value = {
                 "data": [
                     {"embedding": [0.1, 0.2, 0.3]},
@@ -89,15 +81,11 @@ class TestOpenRouterClientEmbedTexts:
                 ]
             }
 
-            # httpx.AsyncClient() as context manager needs to return mock client
             mock_client = MagicMock()
-            # post is async so must be AsyncMock to support await
-            mock_client.post = AsyncMock(return_value=mock_response)
-            mock_client.__aenter__ = AsyncMock(return_value=mock_client)
-            mock_client.__aexit__ = AsyncMock(return_value=None)
+            mock_client.post.return_value = mock_response
 
-            with patch("httpx.AsyncClient", return_value=mock_client):
-                result = await client.embed_texts(["hello", "world"])
+            with patch("httpx.Client", return_value=mock_client):
+                result = client.embed_texts(["hello", "world"])
 
                 assert isinstance(result, list)
                 assert len(result) == 2
@@ -109,8 +97,7 @@ class TestOpenRouterClientCallWithRetry:
     @pytest.mark.asyncio
     async def test_call_with_retry_uses_normalizer(self) -> None:
         """Uses NormalizerRegistry.get_normalizer."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
 
             # Mock the normalizer
@@ -144,8 +131,7 @@ class TestOpenRouterClientCallWithRetry:
     @pytest.mark.asyncio
     async def test_call_with_retry_retries_on_parse_failure(self) -> None:
         """Retries once on JSON parse failure with same model (FR-8.5)."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
 
             # Mock the normalizer to raise JSONDecodeError on first call
@@ -181,8 +167,7 @@ class TestOpenRouterClientCallWithRetry:
     @pytest.mark.asyncio
     async def test_call_with_retry_raises_after_max_retries(self) -> None:
         """Raises UserFriendlyError after exhausting retries (FR-8.6)."""
-        with patch("src.api.openrouter.settings") as mock_settings:
-            mock_settings.openai_api_key = "test-key"
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
             client = OpenRouterClient()
 
             # Mock the normalizer to always raise JSONDecodeError

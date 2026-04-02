@@ -83,14 +83,14 @@ class OpenRouterClient:
         """Initialize OpenRouter client.
 
         Args:
-            api_key: OpenRouter API key. If not provided, reads from settings.
+            api_key: OpenRouter API key. If not provided, reads OPENROUTER_API_KEY env var.
 
         Raises:
             ValueError: If no API key is available.
         """
-        self.api_key = api_key or settings.openai_api_key
+        self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
         if not self.api_key:
-            raise ValueError("OPENAI_API_KEY is required for OpenRouter client")
+            raise ValueError("OPENROUTER_API_KEY is required for OpenRouter client")
 
     def _get_provider(self, model: str) -> str:
         """Extract provider name from model string.
@@ -190,36 +190,39 @@ class OpenRouterClient:
             request_id=self._request_id,
         )
 
-    async def embed_texts(
+    def embed_texts(
         self, texts: List[str], model: str = "openai/text-embedding-3-small"
-    ) -> List[Any]:
+    ) -> List[np.ndarray]:
         """Generate embeddings for a list of texts.
 
         FR-8.1: All LLM calls route through OpenRouter.
+        FR-2.3: Returns List[np.ndarray] for downstream RAG retrieval similarity scoring.
 
         Args:
             texts: List of text strings to embed.
             model: Embedding model identifier (default: 'openai/text-embedding-3-small').
 
         Returns:
-            List of embedding vectors (numpy arrays or lists).
+            List of embedding vectors as numpy arrays.
         """
+        if not texts:
+            return []
+
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
         }
+        payload = {"model": model, "input": texts}
 
-        payload = {
-            "model": model,
-            "input": texts,
-        }
-
-        async with httpx.AsyncClient(base_url="https://openrouter.ai/api/v1") as client:
-            response = await client.post(
-                "/embeddings", headers=headers, json=payload
+        client = httpx.Client()
+        response = client.post(
+            "https://openrouter.ai/api/v1/embeddings",
+            headers=headers,
+            json=payload,
+        )
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"OpenRouter embedding error {response.status_code}: {response.text}"
             )
-            response.raise_for_status()
-            result = response.json()
-
-            # Extract embeddings from response
-            return [item["embedding"] for item in result["data"]]
+        result = response.json()
+        return [np.array(item["embedding"]) for item in result["data"]]

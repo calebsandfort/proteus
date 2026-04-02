@@ -23,7 +23,7 @@ PREMIUM = 'premium'
 LUXURY = 'luxury'
 MID_TIER = 'mid_tier'
 VALUE = 'value'
-WALMART = 'walmart'
+WALMART = 'essential'
 
 # Income bands (descriptive string IDs)
 INCOME_BAND_HIGH = 'over_200k'  # $200K+

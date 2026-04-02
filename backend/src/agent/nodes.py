@@ -6,7 +6,7 @@ import httpx
 from langchain_core.messages import SystemMessage
 from langchain_openai import ChatOpenAI
 
-from src.agent.prompts import SYSTEM_PROMPT
+from src.agent.prompts import PLANNER_PROMPT, SYSTEM_PROMPT, TOOL_SELECTION_PROMPT
 from src.agent.state import (
     AgentOutput,
     AgentState,
@@ -1412,7 +1412,13 @@ async def _execute_single_tool(
                 json={"parameters": resolved_params},
             )
             response.raise_for_status()
-            return response.json()
+            # Merge dependency results into this tool's result so downstream
+            # tools in a sequential plan can see upstream outputs.
+            result = dict(response.json())
+            for dep_result in previous_results.values():
+                if isinstance(dep_result, dict):
+                    result = {**dep_result, **result}
+            return result
     except httpx.HTTPError:
         # If actual API call fails, return mock structure for testing
         return {

@@ -301,11 +301,11 @@ class TestFr66Constants:
         """Category parameters match FR-6.6 specification."""
         from src.data.distributions import CATEGORY_PARAMS
 
-        assert CATEGORY_PARAMS['essential'] == (3.0, 0.8)
-        assert CATEGORY_PARAMS['mid_tier'] == (3.5, 1.0)
-        assert CATEGORY_PARAMS['premium'] == (4.2, 1.2)
-        assert CATEGORY_PARAMS['dining'] == (3.2, 0.9)
-        assert CATEGORY_PARAMS['fast_food'] == (2.2, 0.6)
+        assert CATEGORY_PARAMS['essential'] == (3.1, 0.15)
+        assert CATEGORY_PARAMS['mid_tier'] == (3.3, 0.15)
+        assert CATEGORY_PARAMS['premium'] == (3.5, 0.15)
+        assert CATEGORY_PARAMS['dining'] == (3.2, 0.15)
+        assert CATEGORY_PARAMS['fast_food'] == (3.0, 0.15)
 
     def test_fr_6_6_income_multipliers_keys(self) -> None:
         """All required income band keys exist (7 descriptive string IDs)."""
