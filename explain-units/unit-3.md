@@ -96,7 +96,7 @@ This unit is a critical dependency in the architecture — Units 4, 5, and 6 (th
 cd api && dotnet run
 
 # Or with a specific port
-ASPNETCORE_URLS="http://0.0.0.0:5001" dotnet run --project api
+ASPNETCORE_URLS="http://0.0.0.0:5000" dotnet run --project api
 
 # Via the workmux start script
 ./scripts/start-api
@@ -108,36 +108,35 @@ The API starts on the port configured in `API_PORT` (default varies by environme
 
 **Single query:**
 ```bash
-curl -X POST http://localhost:5001/api/query \
+curl -X POST http://localhost:5000/api/query \
   -H "Content-Type: application/json" \
   -d '{
     "tool": "market_share_trend",
     "dimensions": {
-      "brand": ["Walmart", "Target"],
-      "period": {"start": "2024-01-01", "end": "2024-06-30"}
+      "brands": ["Walmart", "Target"]
     },
-    "aggregation": {"level": "auto", "metric": "sum"},
+    "aggregation": {"level": "auto", "metric": "sum", "period": {"start": "2024-01-01", "end": "2024-06-30"}},
     "pagination": {"limit": 100}
   }'
 ```
 
 **Batch query:**
 ```bash
-curl -X POST http://localhost:5001/api/query/batch \
+curl -X POST http://localhost:5000/api/query/batch \
   -H "Content-Type: application/json" \
   -d '{
     "queries": [
-      {"tool": "market_share_trend", "dimensions": {"brand": ["Walmart"]}, "aggregation": {"level": "monthly", "metric": "sum"}, "pagination": {"limit": 50}},
-      {"tool": "brand_comparison", "dimensions": {"brand": ["Target", "Costco"]}, "aggregation": {"level": "monthly", "metric": "avg"}, "pagination": {"limit": 50}}
+      {"tool": "market_share_trend", "dimensions": {"brands": ["Walmart"]}, "aggregation": {"level": "monthly", "metric": "sum", "period": {"start": "2024-01-01", "end": "2024-06-30"}}, "pagination": {"limit": 50}},
+      {"tool": "brand_comparison", "dimensions": {"brands": ["Target", "Costco"]}, "aggregation": {"level": "monthly", "metric": "avg", "period": {"start": "2024-01-01", "end": "2024-06-30"}}, "pagination": {"limit": 50}}
     ]
   }'
 ```
 
 **Dimension enumeration:**
 ```bash
-curl http://localhost:5001/api/dimensions/brands
-curl http://localhost:5001/api/dimensions/generations
-curl http://localhost:5001/api/dimensions/income-bands
+curl http://localhost:5000/api/dimensions/brands
+curl http://localhost:5000/api/dimensions/generations
+curl http://localhost:5000/api/dimensions/income-bands
 ```
 
 ### Running Tests

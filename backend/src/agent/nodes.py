@@ -1385,45 +1385,195 @@ async def _execute_single_tool(
     parameters: Dict[str, Any],
     previous_results: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """Execute a single tool via HTTP API call.
+    """Execute a single tool via the IU-3 ASP.NET Core Data API.
 
     Args:
         tool_id: ID of the tool to execute.
-        parameters: Parameters for the tool.
+        parameters: Parameters for the tool (from the planner's PlannedTool.parameters).
         previous_results: Results from previously executed tools (for dependency chaining).
 
     Returns:
         Tool execution result as dictionary.
     """
-    # Import here to avoid circular imports
     from src.config import settings
 
-    # Build parameters with any dependency results
-    resolved_params = dict(parameters)
+    resolved_params = {**parameters}
+    for dep_result in previous_results.values():
+        if isinstance(dep_result, dict):
+            resolved_params = {**dep_result, **resolved_params}
 
-    # TODO: In production, this would resolve tool_id to actual API endpoint
-    # For now, return a mock result structure
-    api_base = f"http://{settings.backend_host}:{settings.backend_port}/api/v1"
+    query_request = _build_query_request(tool_id, resolved_params)
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
-                f"{api_base}/tools/{tool_id}/execute",
-                json={"parameters": resolved_params},
+                f"{settings.api_url}/api/query",
+                json=query_request,
             )
             response.raise_for_status()
-            # Merge dependency results into this tool's result so downstream
-            # tools in a sequential plan can see upstream outputs.
-            result = dict(response.json())
-            for dep_result in previous_results.values():
-                if isinstance(dep_result, dict):
-                    result = {**dep_result, **result}
-            return result
+            return dict(response.json())
     except httpx.HTTPError:
-        # If actual API call fails, return mock structure for testing
         return {
             "tool_id": tool_id,
             "parameters": resolved_params,
-            "status": "mock_result",
-            "message": "Tool execution (mock - actual API not available)",
+            "status": "api_unavailable",
+            "message": "IU-3 Data API is not reachable",
         }
+
+
+def _build_query_request(tool_id: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    """Map PlannedTool parameters to the IU-3 QueryRequest JSON format.
+
+    The planner LLM may use various key names drawn from ExtractedDimensions,
+    so this function normalises the most common variations.
+    """
+    # Brand dimension — planner may use "brands", "brand", or "Brands"
+    brands = (
+        parameters.get("brands")
+        or parameters.get("brand")
+        or []
+    )
+    if isinstance(brands, str):
+        brands = [brands]
+
+    # Category dimension
+    categories = (
+        parameters.get("categories")
+        or parameters.get("category")
+        or parameters.get("merchant_category")
+        or []
+    )
+    if isinstance(categories, str):
+        categories = [categories]
+
+    # Geography dimension
+    geographies = (
+        parameters.get("geographies")
+        or parameters.get("geography")
+        or parameters.get("geo")
+        or []
+    )
+    if isinstance(geographies, str):
+        geographies = [geographies]
+
+    # Period — planner may pass start/end directly, or nest under time_range/period
+    period = _resolve_period(parameters)
+
+    # Optional dimensions
+    generations = _as_list(parameters.get("generations") or parameters.get("generation"))
+    income_bands = _as_list(parameters.get("income_bands") or parameters.get("income_band"))
+    channels = _as_list(parameters.get("channels") or parameters.get("channel"))
+    payment_networks = _as_list(
+        parameters.get("payment_networks") or parameters.get("payment_network")
+    )
+    day_of_week = _as_list(parameters.get("day_of_week"))
+
+    pagination_limit = parameters.get("limit", 100)
+
+    return {
+        "tool": tool_id,
+        "dimensions": {
+            "brands": brands,
+            "categories": categories,
+            "geographies": geographies,
+            "generations": generations,
+            "incomeBands": income_bands,
+            "channels": channels,
+            "paymentNetworks": payment_networks,
+            "dayOfWeek": day_of_week,
+        },
+        "aggregation": {
+            "level": parameters.get("aggregation_level", "auto"),
+            "metric": parameters.get("metric", "sum"),
+            "period": period,
+        },
+        "pagination": {
+            "limit": pagination_limit,
+            "offset": parameters.get("offset", 0),
+        },
+    }
+
+
+def _resolve_period(parameters: Dict[str, Any]) -> Dict[str, str]:
+    """Extract start/end dates from various parameter formats the planner may emit."""
+    from datetime import datetime, timedelta
+
+    # Explicit start/end at top level
+    if "start" in parameters and "end" in parameters:
+        return {"start": str(parameters["start"]), "end": str(parameters["end"])}
+
+    # Nested under "period"
+    period = parameters.get("period", {})
+    if isinstance(period, dict) and "start" in period:
+        return {"start": str(period["start"]), "end": str(period["end"])}
+
+    # Nested under "time_range" (ExtractedDimensions format)
+    time_range = parameters.get("time_range")
+    if isinstance(time_range, dict):
+        if "start" in time_range and "end" in time_range:
+            return {"start": str(time_range["start"]), "end": str(time_range["end"])}
+        # Resolve named period strings from time_range["periods"]
+        periods = time_range.get("periods", [])
+        if periods:
+            return _named_period_to_dates(periods[0])
+
+    # Named period string at top level
+    named = parameters.get("time_range_str") or parameters.get("period_name")
+    if named:
+        return _named_period_to_dates(named)
+
+    # Default: last 90 days
+    today = datetime.utcnow().date()
+    return {"start": str(today - timedelta(days=90)), "end": str(today)}
+
+
+def _named_period_to_dates(period_str: str) -> Dict[str, str]:
+    """Convert a named period string (e.g. 'last_quarter') to start/end dates."""
+    import re
+    from datetime import datetime, timedelta
+
+    today = datetime.utcnow().date()
+    s = period_str.lower()
+
+    if "last_quarter" in s or "last quarter" in s:
+        q_start = today.replace(day=1)
+        q_start = (q_start - timedelta(days=1)).replace(day=1)
+        q_start = (q_start - timedelta(days=1)).replace(day=1)
+        return {"start": str(q_start - timedelta(days=60)), "end": str(today - timedelta(days=1))}
+
+    if m := re.search(r"last[_\s](\d+)[_\s]days", s):
+        days = int(m.group(1))
+        return {"start": str(today - timedelta(days=days)), "end": str(today)}
+
+    if m := re.search(r"last[_\s](\d+)[_\s]months", s):
+        months = int(m.group(1))
+        return {"start": str(today - timedelta(days=months * 30)), "end": str(today)}
+
+    if "last_year" in s or "last year" in s:
+        return {"start": str(today - timedelta(days=365)), "end": str(today)}
+
+    if "ytd" in s or "year to date" in s:
+        return {"start": str(today.replace(month=1, day=1)), "end": str(today)}
+
+    if m := re.search(r"q([1-4])[_\s]?(\d{4})", s):
+        q, year = int(m.group(1)), int(m.group(2))
+        month_start = (q - 1) * 3 + 1
+        from datetime import date
+        start = date(year, month_start, 1)
+        end_month = month_start + 2
+        end_year = year if end_month <= 12 else year + 1
+        end_month = end_month if end_month <= 12 else end_month - 12
+        import calendar
+        end = date(end_year, end_month, calendar.monthrange(end_year, end_month)[1])
+        return {"start": str(start), "end": str(end)}
+
+    # Fallback: last 90 days
+    return {"start": str(today - timedelta(days=90)), "end": str(today)}
+
+
+def _as_list(value: Any) -> list:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    return [value]

@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     backend_host: str = "0.0.0.0"
     backend_port: int = 8000
     frontend_url: str = "http://localhost:3000"
+    api_url: str = "http://localhost:5000"  # ASP.NET Core Data API (IU-3)
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 

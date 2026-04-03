@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<TimescaleRepository>();
 builder.Services.AddSingleton<AggregationLevelResolver>();
 builder.Services.AddSingleton<QueryGuardrailValidator>();
-builder.Services.AddSingleton<IQueryRepository, QueryRepository>();
+builder.Services.AddSingleton<IQueryRepository, ProteusQueryRepository>();
 
 // Register dimension cache service
 var configPath = Path.Combine(builder.Environment.ContentRootPath, "config", "dimensions");

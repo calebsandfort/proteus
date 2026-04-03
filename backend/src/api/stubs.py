@@ -1,23 +1,18 @@
-"""IU-3 Dimension Enumeration API stub.
+"""IU-3 Dimension Enumeration API client.
 
-This module provides the interface contract for dimension enumeration
-from the ASP.NET Core Data API (IU-3). This stub will be replaced
-by the actual IU-3 implementation.
-
-Interface: get_dimension_values(dimension: str) -> List[DimensionValue]
-
-IMPORTANT: This is a stub for interface development. When IU-3 is implemented,
-replace these stubs with actual API calls to GET /api/dimensions/{dimension}
+Calls GET /api/dimensions/{dimension} on the ASP.NET Core Data API (IU-3)
+to retrieve canonical dimension values and validate dimension inputs.
 """
 
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
+import httpx
+
+from src.config import settings
 
 
 class DimensionValue:
-    """Stub for dimension enumeration value.
-
-    This class represents a dimension value from the IU-3 enumeration API.
-    When IU-3 is implemented, this will be replaced with the actual API response model.
+    """A dimension value returned by the IU-3 enumeration API.
 
     Attributes:
         id: Unique identifier for the dimension value.
@@ -26,13 +21,6 @@ class DimensionValue:
     """
 
     def __init__(self, id: str, canonical_name: str, aliases: List[str] = None):
-        """Initialize a DimensionValue.
-
-        Args:
-            id: Unique identifier for the dimension value.
-            canonical_name: The canonical/normalized name.
-            aliases: List of alternative names or spellings.
-        """
         self.id = id
         self.canonical_name = canonical_name
         self.aliases = aliases or []
@@ -42,40 +30,63 @@ class DimensionValue:
 
 
 async def get_dimension_values(dimension: str) -> List[DimensionValue]:
-    """Stub that returns dimension values from IU-3 API.
+    """Fetch dimension values from the IU-3 API.
 
-    When IU-3 is implemented, this will call: GET /api/dimensions/{dimension}
+    Calls: GET /api/dimensions/{dimension}
 
     Args:
-        dimension: One of brand, category, geography, generation, income_band, etc.
+        dimension: One of brands, categories, states, generations,
+                   income-bands, channels, day-of-week, payment-networks.
 
     Returns:
-        List of DimensionValue objects
-
-    Note:
-        This is a stub implementation. The actual IU-3 API will provide
-        real dimension enumeration values with proper canonicalization.
+        List of DimensionValue objects, or empty list if the API is unavailable.
     """
-    # Return empty list - real implementation comes from IU-3
-    return []
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(f"{settings.api_url}/api/dimensions/{dimension}")
+            response.raise_for_status()
+            payload = response.json()
+            return [
+                DimensionValue(
+                    id=v["id"],
+                    canonical_name=v["canonicalName"],
+                    aliases=v.get("aliases", []),
+                )
+                for v in payload.get("values", [])
+            ]
+    except httpx.HTTPError:
+        return []
 
 
 async def validate_dimension_value(dimension: str, value: str) -> Dict[str, Any]:
-    """Validate a dimension value against IU-3 enumeration.
+    """Validate a dimension value against the IU-3 canonical enumeration.
+
+    Fetches all values for the dimension and checks whether the given value
+    matches a canonical name or any alias (case-insensitive).
 
     Args:
-        dimension: Dimension type (brand, category, geography, etc.)
-        value: Value to validate
+        dimension: Dimension type (brands, categories, states, etc.)
+        value: Value to validate.
 
     Returns:
         Dict with keys:
             - valid: bool indicating if value is valid
-            - canonical: str or None for canonical value
-            - suggestions: list of suggested corrections
-
-    Note:
-        This is a stub implementation. The actual IU-3 API will validate
-        values against the canonical enumeration and provide suggestions.
+            - canonical: str or None — the canonical name if valid
+            - suggestions: list of up to 3 suggested corrections if invalid
     """
-    # Stub implementation - returns invalid for all inputs
-    return {"valid": False, "canonical": None, "suggestions": []}
+    values = await get_dimension_values(dimension)
+    lower = value.lower()
+
+    for dv in values:
+        if dv.canonical_name.lower() == lower:
+            return {"valid": True, "canonical": dv.canonical_name, "suggestions": []}
+        if any(alias.lower() == lower for alias in dv.aliases):
+            return {"valid": True, "canonical": dv.canonical_name, "suggestions": []}
+
+    suggestions = [
+        dv.canonical_name
+        for dv in values
+        if lower in dv.canonical_name.lower() or dv.canonical_name.lower() in lower
+    ][:3]
+
+    return {"valid": False, "canonical": None, "suggestions": suggestions}
