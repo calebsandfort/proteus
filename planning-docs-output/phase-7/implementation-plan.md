@@ -14,8 +14,9 @@
 | 8 | Response Generation & Streaming | SSE streaming, natural language synthesis | FR-1.2, FR-8.3 | P2 | Medium | IU-7 |
 | 9 | Chat UI Components | CopilotKit integration, message handling, observability | FR-1.1, FR-1.3-1.8 | P3 | Medium | IU-3*, IU-8* |
 | 10 | Visualization Engine | ECharts integration, auto chart selection, KPI cards | FR-5.1-5.9 | P3 | Medium | IU-3* |
-| 11 | Eval Framework | 200+ test cases, metrics collection, anomaly injection | FR-7.1-7.6 | P4 | Medium | IU-1, IU-7, IU-8 |
-| 12 | Docker Compose & DevOps | Container orchestration, environment configuration | NFR-2.1-2.5 | P0 | Low | All others |
+| 11 | Model Selector & Settings | User-configurable model selection, settings persistence | FR-1.5, FR-8.3 | P3 | Low | IU-8, IU-9 |
+| 12 | Eval Framework | 200+ test cases, metrics collection, anomaly injection | FR-7.1-7.6 | P4 | Medium | IU-1, IU-7, IU-8 |
+| 13 | Docker Compose & DevOps | Container orchestration, environment configuration | NFR-2.1-2.5 | P0 | Low | All others |
 
 * Soft dependencies — can develop against mocks/stubs in parallel.
 
