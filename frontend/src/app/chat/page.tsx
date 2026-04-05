@@ -1,3 +1,5 @@
+"use client"
+
 import { CopilotChat } from "@/components/chat/copilot-chat"
 
 export default function ChatPage() {
