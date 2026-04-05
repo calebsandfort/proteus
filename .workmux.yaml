@@ -16,10 +16,10 @@ post_create:
 pre_merge:
   - docker compose down 2>/dev/null || true
   # Kill any lingering dev server processes from worktree panes
-  - pkill -f "pnpm dev" 2>/dev/null || true
-  - pkill -f "uvicorn.*src.main:app" 2>/dev/null || true
-  - pkill -f "dotnet run" 2>/dev/null || true
-  - pkill -f "next-server" 2>/dev/null || true
+  - sh -c 'pkill -f "pnpm dev" || true'
+  - sh -c 'pkill -f "uvicorn.*src.main:app" || true'
+  - sh -c 'pkill -f "dotnet run" || true'
+  - sh -c 'pkill -f "next-server" || true'
 
 pre_remove:
   - docker compose down 2>/dev/null || true
