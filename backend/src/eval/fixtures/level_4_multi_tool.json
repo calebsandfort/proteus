@@ -1,0 +1,88 @@
+[
+  {
+    "id": "level_4_001",
+    "description": "Level 4 Multi-tool - McDonald's vs Wendy's market share and growth",
+    "natural_language_input": "Compare McDonald's and Wendy's market share trends and growth rates",
+    "expected_tools": ["market_share_trend", "brand_comparison", "growth_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["McDonald's", "Wendy's"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "multi_tool",
+      "requires_planning": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_4_multi_tool",
+    "synonym_variations": ["McDonald's vs Wendy's comparison", "McDonald's Wendy's market share"],
+    "category": "brand_comparison"
+  },
+  {
+    "id": "level_4_002",
+    "description": "Level 4 Multi-tool - Major fast food brand trends",
+    "natural_language_input": "Show brand comparison with time trends across all major fast food chains",
+    "expected_tools": ["market_share_trend", "brand_comparison", "growth_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["McDonald's", "Burger King", "Wendy's", "Subway", "Pizza Hut", "Domino's"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "multi_tool",
+      "requires_planning": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_4_multi_tool",
+    "synonym_variations": ["fast food brands comparison", "major QSR chains trend"],
+    "category": "brand_comparison"
+  },
+  {
+    "id": "level_4_003",
+    "description": "Level 4 Multi-tool - Starbucks and Dunkin market overlap",
+    "natural_language_input": "Market share and customer overlap between Starbucks and Dunkin",
+    "expected_tools": ["brand_comparison", "market_share_query", "customer_overlap"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Starbucks", "Dunkin"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "multi_tool",
+      "requires_planning": true,
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_4_multi_tool",
+    "synonym_variations": ["Starbucks vs Dunkin overlap", "Starbucks Dunkin customer comparison"],
+    "category": "brand_comparison"
+  },
+  {
+    "id": "level_4_004",
+    "description": "Level 4 Multi-tool - Grocery and warehouse club comparison",
+    "natural_language_input": "Compare Walmart, Costco, and Sam's Club market share and growth trends",
+    "expected_tools": ["market_share_trend", "brand_comparison", "growth_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Walmart", "Costco", "Sam's Club"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "multi_tool",
+      "requires_planning": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_4_multi_tool",
+    "synonym_variations": ["warehouse club comparison", "Walmart Costco Sam's Club"],
+    "category": "brand_comparison"
+  },
+  {
+    "id": "level_4_005",
+    "description": "Level 4 Multi-tool - Electronics retail analysis",
+    "natural_language_input": "Show Best Buy vs Amazon vs Apple Store performance across categories",
+    "expected_tools": ["brand_comparison", "category_share_query", "market_share_trend"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Best Buy", "Amazon", "Apple"]},
+      {"dimension": "category", "values": ["electronics"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "multi_tool",
+      "requires_planning": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_4_multi_tool",
+    "synonym_variations": ["electronics retail comparison", "Best Buy Amazon Apple electronics"],
+    "category": "brand_comparison"
+  }
+]

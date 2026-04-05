@@ -1,0 +1,122 @@
+[
+  {
+    "id": "level_5_001",
+    "description": "Level 5 Ambiguous - Generic trends query",
+    "natural_language_input": "Show me the trends",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["show trends", "what are the trends"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_002",
+    "description": "Level 5 Ambiguous - Generic brand performance",
+    "natural_language_input": "How are brands doing?",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["brand performance", "how are the brands"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_003",
+    "description": "Level 5 Ambiguous - Generic comparison",
+    "natural_language_input": "Compare performance",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["compare", "performance comparison"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_004",
+    "description": "Level 5 Ambiguous - Generic growth query",
+    "natural_language_input": "What's growing?",
+    "expected_tools": ["growth_analysis"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["what is growing", "growing categories"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_005",
+    "description": "Level 5 Ambiguous - Overly broad market share",
+    "natural_language_input": "Market share for everything",
+    "expected_tools": ["market_share_query"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["all market share", "market share for all brands"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_006",
+    "description": "Level 5 Ambiguous - Unclear time period",
+    "natural_language_input": "How did they do recently?",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["how did they do", "recent performance"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_007",
+    "description": "Level 5 Ambiguous - Missing brand specification",
+    "natural_language_input": "Show me the fast food brands",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["fast food brands", "QSR brands"],
+    "category": "ambiguous"
+  },
+  {
+    "id": "level_5_008",
+    "description": "Level 5 Ambiguous - Unclear geography",
+    "natural_language_input": "How is the Southwest doing?",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [],
+    "expected_result_characteristics": {
+      "type": "needs_clarification",
+      "clarification_expected": true,
+      "requires_clarification": true
+    },
+    "complexity_level": "level_5_ambiguous",
+    "synonym_variations": ["southwest performance", "southwest brands"],
+    "category": "ambiguous"
+  }
+]

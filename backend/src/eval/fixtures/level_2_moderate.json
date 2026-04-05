@@ -1,0 +1,137 @@
+[
+  {
+    "id": "level_2_001",
+    "description": "Level 2 Moderate - Texas vs California comparison",
+    "natural_language_input": "Compare Target's market share in Texas vs California",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Target"]},
+      {"dimension": "geography", "values": ["TX", "CA"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "comparison",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Target Texas vs California share", "Target market share TX CA"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_2_002",
+    "description": "Level 2 Moderate - Starbucks category trend",
+    "natural_language_input": "Show Starbucks category share trend over 4 quarters",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Starbucks"]},
+      {"dimension": "time_range", "values": ["Q1", "Q2", "Q3", "Q4"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "trend",
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Starbucks quarterly trend", "Starbucks share over 4 quarters"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_2_003",
+    "description": "Level 2 Moderate - McDonald's vs Burger King",
+    "natural_language_input": "How is McDonald's doing vs Burger King?",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["McDonald's", "Burger King"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "comparison",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["McDonald's vs BK", "McDonald's Burger King comparison"],
+    "category": "brand_comparison"
+  },
+  {
+    "id": "level_2_004",
+    "description": "Level 2 Moderate - Walmart by generation",
+    "natural_language_input": "Walmart growth by generation",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Walmart"]},
+      {"dimension": "generation", "values": ["Gen Z", "Millennial", "Gen X", "Boomer"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "demographic_analysis",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Walmart customer generation", "Walmart sales by age group"],
+    "category": "demographic"
+  },
+  {
+    "id": "level_2_005",
+    "description": "Level 2 Moderate - Target customer income",
+    "natural_language_input": "Target customer income distribution",
+    "expected_tools": ["category_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Target"]},
+      {"dimension": "income_band", "values": ["$0-25k", "$25-50k", "$50-75k", "$75-100k", "$100k+"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "income_distribution",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Target shoppers income", "Target demographic income"],
+    "category": "demographic"
+  },
+  {
+    "id": "level_2_006",
+    "description": "Level 2 Moderate - Starbucks geography performance",
+    "natural_language_input": "Starbucks geography performance by region",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Starbucks"]},
+      {"dimension": "geography", "values": ["Northeast", "Southeast", "Midwest", "West"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "geographic_analysis",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Starbucks regional performance", "Starbucks by region"],
+    "category": "geography"
+  },
+  {
+    "id": "level_2_007",
+    "description": "Level 2 Moderate - Chipotle category trends by generation",
+    "natural_language_input": "Chipotle category trends by age",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Chipotle"]},
+      {"dimension": "generation", "values": ["Gen Z", "Millennial", "Gen X"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "demographic_trend",
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Chipotle customer age", "Chipotle generation trends"],
+    "category": "demographic"
+  },
+  {
+    "id": "level_2_008",
+    "description": "Level 2 Moderate - Nike regional analysis",
+    "natural_language_input": "Nike regional performance analysis",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Nike"]},
+      {"dimension": "geography", "values": ["Northeast", "Southeast", "Midwest", "West", "Southwest"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "regional_comparison",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_2_moderate",
+    "synonym_variations": ["Nike by region", "Nike geographic analysis"],
+    "category": "geography"
+  }
+]

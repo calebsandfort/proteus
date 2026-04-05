@@ -1,0 +1,99 @@
+[
+  {
+    "id": "level_3_001",
+    "description": "Level 3 Complex - Chipotle sales spike analysis",
+    "natural_language_input": "Why did Chipotle's sales spike in June 2024 across Texas and California?",
+    "expected_tools": ["market_share_trend", "growth_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Chipotle"]},
+      {"dimension": "geography", "values": ["TX", "CA"]},
+      {"dimension": "time_range", "values": ["2024-Q2", "2024-06"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "complex_analysis",
+      "requires_explanation": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_3_complex",
+    "synonym_variations": ["Chipotle Texas California June spike", "Chipotle Q2 growth analysis"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_3_002",
+    "description": "Level 3 Complex - Target customer trading analysis",
+    "natural_language_input": "Are Target customers trading up or down in Q4 2024 by generation?",
+    "expected_tools": ["market_share_trend", "category_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Target"]},
+      {"dimension": "generation", "values": ["Gen Z", "Millennial", "Gen X", "Boomer"]},
+      {"dimension": "time_range", "values": ["2024-Q4"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "trading_analysis",
+      "requires_explanation": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_3_complex",
+    "synonym_variations": ["Target Q4 trading patterns", "Target customer behavior Q4"],
+    "category": "demographic"
+  },
+  {
+    "id": "level_3_003",
+    "description": "Level 3 Complex - Prime Day impact analysis",
+    "natural_language_input": "Did Prime Day impact Walmart's in-store vs online traffic in 2024?",
+    "expected_tools": ["brand_comparison", "channel_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Walmart"]},
+      {"dimension": "channel", "values": ["in-store", "online"]},
+      {"dimension": "time_range", "values": ["2024-07"]},
+      {"dimension": "category", "values": ["e-commerce", "general merchandise"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "channel_comparison",
+      "requires_explanation": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_3_complex",
+    "synonym_variations": ["Prime Day Walmart online vs store", "Walmart Prime Day traffic"],
+    "category": "channel"
+  },
+  {
+    "id": "level_3_004",
+    "description": "Level 3 Complex - Wendy's same-store sales by geography",
+    "natural_language_input": "What was Wendy's same-store sales growth in Q4 2024 by geography and category?",
+    "expected_tools": ["growth_analysis", "brand_comparison"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Wendy's"]},
+      {"dimension": "geography", "values": ["Northeast", "Southeast", "Midwest", "West"]},
+      {"dimension": "time_range", "values": ["2024-Q4"]},
+      {"dimension": "category", "values": ["QSR", "fast food"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "geographic_growth",
+      "requires_explanation": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_3_complex",
+    "synonym_variations": ["Wendy's Q4 same-store growth", "Wendy's regional sales Q4"],
+    "category": "growth"
+  },
+  {
+    "id": "level_3_005",
+    "description": "Level 3 Complex - Multi-category seasonal analysis",
+    "natural_language_input": "Show holiday shopping patterns across retail categories in November-December 2024",
+    "expected_tools": ["market_share_trend", "category_share_query"],
+    "expected_parameters": [
+      {"dimension": "category", "values": ["retail", "general merchandise", "electronics", "apparel"]},
+      {"dimension": "time_range", "values": ["2024-11", "2024-12"]},
+      {"dimension": "geography", "values": ["US"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "seasonal_analysis",
+      "requires_explanation": true,
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_3_complex",
+    "synonym_variations": ["holiday retail trends", "November December shopping patterns"],
+    "category": "seasonal"
+  }
+]

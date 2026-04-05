@@ -1,0 +1,162 @@
+[
+  {
+    "id": "level_1_001",
+    "description": "Level 1 Simple - Walmart market share query",
+    "natural_language_input": "What is Walmart's market share in grocery?",
+    "expected_tools": ["market_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Walmart"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "single_value",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Walmart's share of grocery market", "Walmart grocery market share"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_1_002",
+    "description": "Level 1 Simple - Target sales trend",
+    "natural_language_input": "Show Target's sales trend",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Target"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "trend",
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Target sales over time", "Target growth trend"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_1_003",
+    "description": "Level 1 Simple - McDonald's growth",
+    "natural_language_input": "How much did McDonald's grow last quarter?",
+    "expected_tools": ["growth_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["McDonald's"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "growth_rate",
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["McDonald's growth rate", "McDonald's quarter growth"],
+    "category": "growth"
+  },
+  {
+    "id": "level_1_004",
+    "description": "Level 1 Simple - Starbucks category share",
+    "natural_language_input": "What is Starbucks' category share?",
+    "expected_tools": ["category_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Starbucks"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "category_breakdown",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Starbucks market share by category", "Starbucks category performance"],
+    "category": "category_share"
+  },
+  {
+    "id": "level_1_005",
+    "description": "Level 1 Simple - Chipotle market share",
+    "natural_language_input": "What is Chipotle's market share?",
+    "expected_tools": ["market_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Chipotle"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "single_value",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Chipotle's share of QSR market", "Chipotle market share percentage"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_1_006",
+    "description": "Level 1 Simple - Nike brand performance",
+    "natural_language_input": "How is Nike performing?",
+    "expected_tools": ["brand_comparison"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Nike"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "brand_metrics",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Nike sales performance", "Nike brand metrics"],
+    "category": "brand_analysis"
+  },
+  {
+    "id": "level_1_007",
+    "description": "Level 1 Simple - Apple store revenue",
+    "natural_language_input": "Apple Store revenue",
+    "expected_tools": ["market_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Apple"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "single_value",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Apple retail sales", "Apple store performance"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_1_008",
+    "description": "Level 1 Simple - Amazon e-commerce share",
+    "natural_language_input": "Amazon's e-commerce market share",
+    "expected_tools": ["market_share_query"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Amazon"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "single_value",
+      "has_time_dimension": false
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Amazon online share", "Amazon retail market share"],
+    "category": "market_share"
+  },
+  {
+    "id": "level_1_009",
+    "description": "Level 1 Simple - Costco wholesale growth",
+    "natural_language_input": "Costco growth rate",
+    "expected_tools": ["growth_analysis"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Costco"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "growth_rate",
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Costco YoY growth", "Costco revenue growth"],
+    "category": "growth"
+  },
+  {
+    "id": "level_1_010",
+    "description": "Level 1 Simple - Home Depot sales",
+    "natural_language_input": "Home Depot sales performance",
+    "expected_tools": ["market_share_trend"],
+    "expected_parameters": [
+      {"dimension": "brand", "values": ["Home Depot"]}
+    ],
+    "expected_result_characteristics": {
+      "type": "trend",
+      "has_time_dimension": true
+    },
+    "complexity_level": "level_1_simple",
+    "synonym_variations": ["Home Depot revenue trend", "Home Depot sales over time"],
+    "category": "market_share"
+  }
+]
