@@ -15,18 +15,9 @@ post_create:
 
 pre_merge:
   - docker compose down 2>/dev/null || true
-  # Kill any lingering dev server processes from worktree panes
-  - sh -c 'pgrep -f "pnpm dev" | xargs -r kill -9 2>/dev/null || true'
-  - sh -c 'pgrep -f "uvicorn.*src.main:app" | xargs -r kill -9 2>/dev/null || true'
-  - sh -c 'pgrep -f "dotnet run" | xargs -r kill -9 2>/dev/null || true'
-  - sh -c 'pgrep -f "next-server" | xargs -r kill -9 2>/dev/null || true'
 
 pre_remove:
   - docker compose down 2>/dev/null || true
-  - sh -c 'pgrep -f "pnpm dev" | xargs -r kill -9 2>/dev/null || true'
-  - sh -c 'pgrep -f "uvicorn.*src.main:app" | xargs -r kill -9 2>/dev/null || true'
-  - sh -c 'pgrep -f "dotnet run" | xargs -r kill -9 2>/dev/null || true'
-  - sh -c 'pgrep -f "next-server" | xargs -r kill -9 2>/dev/null || true'
 
 panes:
   - command: claude
